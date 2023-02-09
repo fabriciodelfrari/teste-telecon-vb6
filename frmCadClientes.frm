@@ -21,27 +21,19 @@ Begin VB.Form frmCadClientes
    MDIChild        =   -1  'True
    ScaleHeight     =   5640
    ScaleWidth      =   11400
-   Begin VB.CommandButton cmdTesteConn 
-      Caption         =   "teste"
-      Height          =   495
-      Left            =   4320
-      TabIndex        =   22
-      Top             =   1200
-      Width           =   1635
-   End
    Begin VB.ComboBox cboSexo 
       Height          =   360
-      Left            =   8160
+      Left            =   8100
       TabIndex        =   21
       Text            =   "M/F"
-      Top             =   2520
-      Width           =   1275
+      Top             =   2280
+      Width           =   915
    End
    Begin rdActiveText.ActiveText txtCpf 
       Height          =   315
       Left            =   5820
       TabIndex        =   20
-      Top             =   2580
+      Top             =   2280
       Width           =   1695
       _ExtentX        =   2990
       _ExtentY        =   556
@@ -65,7 +57,7 @@ Begin VB.Form frmCadClientes
       Height          =   315
       Left            =   60
       TabIndex        =   19
-      Top             =   2580
+      Top             =   2280
       Width           =   5115
       _ExtentX        =   9022
       _ExtentY        =   556
@@ -108,9 +100,9 @@ Begin VB.Form frmCadClientes
    End
    Begin rdActiveText.ActiveText txtEndereco 
       Height          =   315
-      Left            =   120
+      Left            =   60
       TabIndex        =   11
-      Top             =   4440
+      Top             =   3840
       Width           =   5055
       _ExtentX        =   8916
       _ExtentY        =   556
@@ -130,9 +122,9 @@ Begin VB.Form frmCadClientes
    End
    Begin rdActiveText.ActiveText txtCep 
       Height          =   315
-      Left            =   120
+      Left            =   60
       TabIndex        =   9
-      Top             =   3600
+      Top             =   3000
       Width           =   2835
       _ExtentX        =   5001
       _ExtentY        =   556
@@ -155,9 +147,9 @@ Begin VB.Form frmCadClientes
    Begin VB.CommandButton cmdBuscaEndereco 
       Caption         =   "Consultar CEP"
       Height          =   315
-      Left            =   3120
+      Left            =   3060
       TabIndex        =   5
-      Top             =   3600
+      Top             =   3000
       Width           =   1575
    End
    Begin rdActiveText.ActiveText txtCodigo 
@@ -165,7 +157,7 @@ Begin VB.Form frmCadClientes
       Index           =   0
       Left            =   60
       TabIndex        =   0
-      Top             =   1680
+      Top             =   1380
       Width           =   1695
       _ExtentX        =   2990
       _ExtentY        =   556
@@ -184,9 +176,9 @@ Begin VB.Form frmCadClientes
    End
    Begin rdActiveText.ActiveText txtCidade 
       Height          =   315
-      Left            =   120
+      Left            =   60
       TabIndex        =   12
-      Top             =   5280
+      Top             =   4680
       Width           =   2535
       _ExtentX        =   4471
       _ExtentY        =   556
@@ -205,9 +197,9 @@ Begin VB.Form frmCadClientes
    End
    Begin rdActiveText.ActiveText txtNumero 
       Height          =   315
-      Left            =   5640
+      Left            =   5580
       TabIndex        =   13
-      Top             =   4440
+      Top             =   3840
       Width           =   1035
       _ExtentX        =   1826
       _ExtentY        =   556
@@ -227,9 +219,9 @@ Begin VB.Form frmCadClientes
    End
    Begin rdActiveText.ActiveText txtBairro 
       Height          =   315
-      Left            =   2880
+      Left            =   2820
       TabIndex        =   15
-      Top             =   5280
+      Top             =   4680
       Width           =   2535
       _ExtentX        =   4471
       _ExtentY        =   556
@@ -319,35 +311,35 @@ Begin VB.Form frmCadClientes
       Caption         =   "Número"
       Height          =   315
       Index           =   0
-      Left            =   5700
+      Left            =   5640
       TabIndex        =   14
-      Top             =   4080
+      Top             =   3480
       Width           =   795
    End
    Begin VB.Label lbCep 
       Caption         =   "CEP"
       Height          =   315
-      Left            =   180
+      Left            =   120
       TabIndex        =   10
-      Top             =   3300
+      Top             =   2700
       Width           =   1155
    End
    Begin VB.Label lbNome 
       Caption         =   "Endereço"
       Height          =   315
       Index           =   0
-      Left            =   180
+      Left            =   120
       TabIndex        =   8
-      Top             =   4080
+      Top             =   3480
       Width           =   1635
    End
    Begin VB.Label lbBairro 
       Caption         =   "Bairro"
       Height          =   315
       Index           =   2
-      Left            =   3120
+      Left            =   2940
       TabIndex        =   7
-      Top             =   4860
+      Top             =   4320
       Width           =   675
    End
    Begin VB.Label lbCidade 
@@ -356,16 +348,16 @@ Begin VB.Form frmCadClientes
       Index           =   1
       Left            =   120
       TabIndex        =   6
-      Top             =   4860
+      Top             =   4320
       Width           =   675
    End
    Begin VB.Label lbSexo 
       Caption         =   "Sexo"
       Height          =   315
       Index           =   0
-      Left            =   8280
+      Left            =   8220
       TabIndex        =   4
-      Top             =   2160
+      Top             =   1920
       Width           =   675
    End
    Begin VB.Label lbCpf 
@@ -374,7 +366,7 @@ Begin VB.Form frmCadClientes
       Index           =   1
       Left            =   5880
       TabIndex        =   3
-      Top             =   2220
+      Top             =   1920
       Width           =   675
    End
    Begin VB.Label lbNome 
@@ -383,7 +375,7 @@ Begin VB.Form frmCadClientes
       Index           =   1
       Left            =   180
       TabIndex        =   2
-      Top             =   2220
+      Top             =   1920
       Width           =   1635
    End
    Begin VB.Label Label1 
@@ -392,7 +384,7 @@ Begin VB.Form frmCadClientes
       Index           =   0
       Left            =   120
       TabIndex        =   1
-      Top             =   1320
+      Top             =   1020
       Width           =   675
    End
 End
@@ -403,15 +395,30 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Sub cmdTesteConn_Click()
-    On Error GoTo TratamentoDeErro
+Private Sub cboSexo_Change()
+
+End Sub
+
+Private Sub Form_Load()
+    cboSexo.AddItem "M"
+    cboSexo.AddItem "F"
+End Sub
+Private Sub tbrCadClienteFrm_ButtonClick(ByVal Button As MSComctlLib.Button)
+    If Button.key = "CadCliente" Then
+        sCadastrarCliente
+    ElseIf Button.key = "CancCad" Then
+        Unload Me
+    End If
+End Sub
+Private Sub sCadastrarCliente()
+ On Error GoTo TrataErro
+    
     If Not bVerificarCamposVaziosOuExcedentes Then
         Exit Sub
     End If
 
     Dim Conexao As clsConexaobanco
     Set Conexao = New clsConexaobanco
-    Dim rs As ADODB.Recordset
 
     Dim sQuery As String
     Dim btSexo As Byte
@@ -438,21 +445,20 @@ Private Sub cmdTesteConn_Click()
     Conexao.InserirNoBanco (sQuery)
 
     Conexao.DesconectarBanco
+    
+    MsgBox "Cliente cadastrado!", vbInformation, "Cadastro"
+    
+    LimparCampos
 
-TratamentoDeErro:
+TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao cadastrar o cliente: " & Err.Description & " - " & Err.Number
     End If
 
 End Sub
 
-Private Sub Form_Load()
-    cboSexo.AddItem "M"
-    cboSexo.AddItem "F"
-End Sub
-
 Private Sub cmdBuscaEndereco_Click()
-
+On Error GoTo TrataErro
     If Len(txtCep.Text) < 1 Then
         MsgBox "Campo CEP está vázio ou incompleto. Por favor, verifique.", vbInformation, "Atenção!"
         Exit Sub
@@ -464,6 +470,13 @@ Private Sub cmdBuscaEndereco_Click()
 
     oCepCliente.Open "GET", "https://viacep.com.br/ws/" & txtCep.Text & "/json/", False
     oCepCliente.Send
+    
+    
+    If InStr(oCepCliente.ResponseText, "erro") Then
+        MsgBox "CEP não localizado. Verifique o CEP ou insira os dados manualmente.", vbInformation, "Atenção!"
+        Exit Sub
+    End If
+    
 
     If oCepCliente.Status = 200 Then
         ' Parse da resposta para Json
@@ -473,9 +486,13 @@ Private Sub cmdBuscaEndereco_Click()
         txtEndereco.Text = oJsonParse("logradouro")
         txtCidade.Text = oJsonParse("localidade")
         txtBairro.Text = oJsonParse("bairro")
-
     Else
         MsgBox "Não foi possível localizar o endereço. Por favor, insira os dados manualmente.", vbInformation, "Consulta CEP"
+    End If
+    
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao localizar o endereço. Por favor, insira os dados manualmente.", vbInformation, "Atenção!"
     End If
 End Sub
 
@@ -536,18 +553,17 @@ Private Function bVerificarCamposVaziosOuExcedentes() As Boolean
     bVerificarCamposVaziosOuExcedentes = True
 
 End Function
-Private Sub sCadastrarCliente()
-
+Private Sub LimparCampos()
+    txtNome.Text = ""
+    txtCpf.Text = ""
+    cboSexo.Refresh
+    txtCep.Text = ""
+    txtEndereco.Text = ""
+    txtCidade.Text = ""
+    txtBairro.Text = ""
+    txtNumero.Text = ""
+    txtTelefoneContato.Text = ""
 End Sub
 
-
-Private Sub tbrCadClienteFrm_ButtonClick(ByVal Button As MSComctlLib.Button)
-    If Button.key = "CadCliente" Then
-        sCadastrarCliente
-    ElseIf Button.key = "CancCad" Then
-        Unload Me
-
-    End If
-End Sub
 
 
