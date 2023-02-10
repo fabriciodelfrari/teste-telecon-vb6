@@ -395,10 +395,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Sub Form_Load()
-    cboSexo.AddItem "M"
-    cboSexo.AddItem "F"
-End Sub
 Private Sub tbrCadClienteFrm_ButtonClick(ByVal Button As MSComctlLib.Button)
     If Button.key = "CadCliente" Then
         sCadastrarCliente
@@ -406,184 +402,14 @@ Private Sub tbrCadClienteFrm_ButtonClick(ByVal Button As MSComctlLib.Button)
         Unload Me
     End If
 End Sub
-Private Sub sCadastrarCliente()
- On Error GoTo TrataErro
-    
-    If Not bVerificarCamposVaziosOuExcedentes Then
-        Exit Sub
-    End If
 
-    Dim Conexao As clsConexaobanco
-    Set Conexao = New clsConexaobanco
 
-    Dim sQuery As String
-    Dim btSexo As Byte
-    Dim sRemoveMascara As clsTratamentoMascaras
-    Dim sCpfSemMascara As String
-    Dim iProximoCodigo As Integer
 
-    If cboSexo.Text = "M" Then
-        btSexo = 0
-    ElseIf cboSexo.Text = "F" Then
-        btSexo = 1
-    End If
 
-    Set sRemoveMascara = New clsTratamentoMascaras
-    sCpfSemMascara = sRemoveMascara.sRemoveMascaraCpf(txtCpf.Text)
 
-    Conexao.ConectarBanco
-    
-    iProximoCodigo = fObterProximoCodigoCliente
 
-    sQuery = "insert into Clientes(CodCliente, Nome,Endereco,Cidade,Bairro,CPF,LimiteCredito,ValorGasto,Sexo) "
-    sQuery = sQuery & "VALUES(" & iProximoCodigo & ",'" & txtNome.Text & "', '" & txtEndereco.Text & ", " & txtNumero.Text & "', '"
-    sQuery = sQuery & txtCidade.Text & "', '" & txtBairro.Text & "','"
-    sQuery = sQuery & sCpfSemMascara & "', 1000, 0, " & btSexo & ")"
 
-    Conexao.InserirNoBanco (sQuery)
 
-    Conexao.DesconectarBanco
-    
-    MsgBox "Cliente cadastrado!", vbInformation, "Cadastro"
-    
-    LimparCampos
-
-TrataErro:
-    If Err.Number <> 0 Then
-        MsgBox "Ocorreu um erro ao cadastrar o cliente: " & Err.Description & " - " & Err.Number
-    End If
-
-End Sub
-
-Private Sub cmdBuscaEndereco_Click()
-On Error GoTo TrataErro
-    If Len(txtCep.Text) < 1 Then
-        MsgBox "Campo CEP está vázio ou incompleto. Por favor, verifique.", vbInformation, "Atenção!"
-        Exit Sub
-    End If
-
-    Dim oCepCliente As Object
-    Dim oJsonParse As Object
-    Set oCepCliente = CreateObject("WinHttp.WinHttpRequest.5.1")
-
-    oCepCliente.Open "GET", "https://viacep.com.br/ws/" & txtCep.Text & "/json/", False
-    oCepCliente.Send
-    
-    
-    If InStr(oCepCliente.ResponseText, "erro") Then
-        MsgBox "CEP não localizado. Verifique o CEP ou insira os dados manualmente.", vbInformation, "Atenção!"
-        Exit Sub
-    End If
-    
-
-    If oCepCliente.Status = 200 Then
-        ' Parse da resposta para Json
-        Set oJsonParse = fParsearJson(oCepCliente.ResponseText)
-
-        ' Inserir as informações nos campos
-        txtEndereco.Text = oJsonParse("logradouro")
-        txtCidade.Text = oJsonParse("localidade")
-        txtBairro.Text = oJsonParse("bairro")
-    Else
-        MsgBox "Não foi possível localizar o endereço. Por favor, insira os dados manualmente.", vbInformation, "Consulta CEP"
-    End If
-    
-TrataErro:
-    If Err.Number <> 0 Then
-        MsgBox "Ocorreu um erro ao localizar o endereço. Por favor, insira os dados manualmente.", vbInformation, "Atenção!"
-    End If
-End Sub
-
-Private Function fParsearJson(ByVal sObjJson As String) As Object
-    Dim obJson As Object
-    Set obJson = JSON.parse(sObjJson)
-    Set fParsearJson = obJson
-End Function
-Private Function bVerificarCamposVaziosOuExcedentes() As Boolean
-
-    If Len(txtNome.Text) < 1 Then
-        MsgBox "Campo nome está vazio ou incompleto.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtCpf.Text) < 1 Then
-        MsgBox "Campo CPF está vazio ou incompleto.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtCep.Text) < 1 Then
-        MsgBox "Campo CEP está vázio ou incompleto.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtEndereco.Text) < 5 Then
-        MsgBox "Campo Endereço está vázio ou incompleto.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtEndereco.Text) > 60 Then
-        MsgBox "Campo Endereço excedeu o limite máximo de caracteres (60). Por favor, abrevie.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtNumero.Text) < 1 Then
-        MsgBox "Campo Número está vázio ou incompleto.", vbInformation, "Atenção!"
-        txtNumero.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtCidade.Text) < 3 Then
-        MsgBox "Campo Cidade está vázio ou incompleto.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtCidade.Text) > 40 Then
-        MsgBox "Campo Cidade excedeu o limite máximo de caracteres (40). Por favor, abrevie.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtBairro.Text) < 3 Then
-        MsgBox "Campo Bairro está vázio ou incompleto.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(cboSexo.Text) < 1 Or cboSexo.Text = "M/F" Then
-        MsgBox "Campo Sexo está vázio ou definido como padrão. Por favor, verifique.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    ElseIf Len(txtTelefoneContato.Text) < 14 Then
-        MsgBox "Campo Telefone está vázio ou incompleto.", vbInformation, "Atenção!"
-        bVerificarCamposVaziosOuExcedentes = False
-        Exit Function
-    End If
-
-    bVerificarCamposVaziosOuExcedentes = True
-
-End Function
-Private Sub LimparCampos()
-    txtNome.Text = ""
-    txtCpf.Text = ""
-    cboSexo.Refresh
-    txtCep.Text = ""
-    txtEndereco.Text = ""
-    txtCidade.Text = ""
-    txtBairro.Text = ""
-    txtNumero.Text = ""
-    txtTelefoneContato.Text = ""
-End Sub
-
-Private Function fObterProximoCodigoCliente() As Integer
-On Error GoTo TrataErro
-
-    Dim Conexao As clsConexaobanco
-    Dim iProxCodigoCliente As Integer
-    Dim rsRetornoBanco As ADODB.Recordset
-    Set Conexao = New clsConexaobanco
-    
-    
-    
-    Set rsRetornoBanco = Conexao.oPesquisaBanco("SELECT MAX(CodCliente) as Maior FROM CLIENTES")
-    
-    iProxCodigoCliente = Val(rsRetornoBanco("maior"))
-    
-    fObterProximoCodigoCliente = iProxCodigoCliente + 1
-
-TrataErro:
-    If Err.Number <> 0 Then
-        MsgBox "Ocorreu um erro ao buscar o código do cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
-    End If
-End Function
 
 
 

@@ -46,7 +46,7 @@ Public Sub FecharRecordset()
     rs.Close
 End Sub
 
-Public Function oPesquisaBanco(ByVal sQuery As String) As ADODB.Recordset
+Public Function fPesquisaBanco(ByVal sQuery As String) As ADODB.Recordset
 
     
     ConectarBanco
@@ -55,7 +55,7 @@ Public Function oPesquisaBanco(ByVal sQuery As String) As ADODB.Recordset
     
     rs.Open sQuery, cn
 
-    Set oPesquisaBanco = rs
+    Set fPesquisaBanco = rs
 
     Set rs = Nothing
     
