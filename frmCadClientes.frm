@@ -395,10 +395,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Private Sub cboSexo_Change()
-
-End Sub
-
 Private Sub Form_Load()
     cboSexo.AddItem "M"
     cboSexo.AddItem "F"
@@ -424,6 +420,7 @@ Private Sub sCadastrarCliente()
     Dim btSexo As Byte
     Dim sRemoveMascara As clsTratamentoMascaras
     Dim sCpfSemMascara As String
+    Dim iProximoCodigo As Integer
 
     If cboSexo.Text = "M" Then
         btSexo = 0
@@ -434,11 +431,12 @@ Private Sub sCadastrarCliente()
     Set sRemoveMascara = New clsTratamentoMascaras
     sCpfSemMascara = sRemoveMascara.sRemoveMascaraCpf(txtCpf.Text)
 
-
     Conexao.ConectarBanco
+    
+    iProximoCodigo = fObterProximoCodigoCliente
 
-    sQuery = "insert into Clientes(Nome,Endereco,Cidade,Bairro,CPF,LimiteCredito,ValorGasto,Sexo) "
-    sQuery = sQuery & "VALUES('" & txtNome.Text & "', '" & txtEndereco.Text & ", " & txtNumero.Text & "', '"
+    sQuery = "insert into Clientes(CodCliente, Nome,Endereco,Cidade,Bairro,CPF,LimiteCredito,ValorGasto,Sexo) "
+    sQuery = sQuery & "VALUES(" & iProximoCodigo & ",'" & txtNome.Text & "', '" & txtEndereco.Text & ", " & txtNumero.Text & "', '"
     sQuery = sQuery & txtCidade.Text & "', '" & txtBairro.Text & "','"
     sQuery = sQuery & sCpfSemMascara & "', 1000, 0, " & btSexo & ")"
 
@@ -564,6 +562,28 @@ Private Sub LimparCampos()
     txtNumero.Text = ""
     txtTelefoneContato.Text = ""
 End Sub
+
+Private Function fObterProximoCodigoCliente() As Integer
+On Error GoTo TrataErro
+
+    Dim Conexao As clsConexaobanco
+    Dim iProxCodigoCliente As Integer
+    Dim rsRetornoBanco As ADODB.Recordset
+    Set Conexao = New clsConexaobanco
+    
+    
+    
+    Set rsRetornoBanco = Conexao.oPesquisaBanco("SELECT MAX(CodCliente) as Maior FROM CLIENTES")
+    
+    iProxCodigoCliente = Val(rsRetornoBanco("maior"))
+    
+    fObterProximoCodigoCliente = iProxCodigoCliente + 1
+
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao buscar o código do cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+End Function
 
 
 

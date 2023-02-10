@@ -2,12 +2,12 @@ VERSION 5.00
 Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.0#0"; "MSCOMCTL.OCX"
 Begin VB.MDIForm mdiPrincipal 
    BackColor       =   &H8000000C&
-   Caption         =   "MDIForm1"
+   Caption         =   "CRUD"
    ClientHeight    =   7380
    ClientLeft      =   225
    ClientTop       =   870
    ClientWidth     =   12480
-   LinkTopic       =   "MDIForm1"
+   LinkTopic       =   "mdlCRUD"
    StartUpPosition =   3  'Windows Default
    WindowState     =   2  'Maximized
    Begin MSComctlLib.StatusBar stbBarraStatus 
@@ -102,19 +102,15 @@ Begin VB.MDIForm mdiPrincipal
             ImageKey        =   "CadClientes"
          EndProperty
          BeginProperty Button2 {66833FEA-8583-11D1-B16A-00C0F0283628} 
-            Caption         =   "Relatórios"
-            Key             =   "Relatorios"
+            Caption         =   "Consultas"
+            Key             =   "Consultas"
             ImageKey        =   "RelClientes"
             Style           =   5
             BeginProperty ButtonMenus {66833FEC-8583-11D1-B16A-00C0F0283628} 
-               NumButtonMenus  =   2
+               NumButtonMenus  =   1
                BeginProperty ButtonMenu1 {66833FEE-8583-11D1-B16A-00C0F0283628} 
-                  Key             =   "RelClientes"
-                  Text            =   "Relatório de Clientes"
-               EndProperty
-               BeginProperty ButtonMenu2 {66833FEE-8583-11D1-B16A-00C0F0283628} 
-                  Key             =   "RelProdutos"
-                  Text            =   "Relatório de Produtos"
+                  Key             =   "ConsultaCliente"
+                  Text            =   "Clientes"
                EndProperty
             EndProperty
          EndProperty
@@ -174,8 +170,8 @@ Private Sub tbrBarraFerramentas_ButtonClick(ByVal Button As MSComctlLib.Button)
 End Sub
 
 Private Sub tbrBarraFerramentas_ButtonMenuClick(ByVal ButtonMenu As MSComctlLib.ButtonMenu)
-    If ButtonMenu.key = "RelClientes" Then
-        MsgBox "Relatorio de clientes", vbInformation
+    If ButtonMenu.key = "ConsultaCliente" Then
+        frmConsultaClientes.Show
     ElseIf ButtonMenu.key = "RelProdutos" Then
         MsgBox "Relatorio de PRODUTOS", vbInformation
     End If

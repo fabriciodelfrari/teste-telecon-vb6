@@ -17,6 +17,7 @@ Class=cJSONScript; C:\Users\fabricio.costa\Desktop\VBJSON\cJSONScript.cls
 Module=mdlConexaoBanco; mdlConexaoBanco.bas
 Class=clsConexaobanco; clsConexaoBanco.cls
 Class=clsTratamentoMascaras; clsTratamentoMarcaras.cls
+Form=frmConsultaClientes.frm
 Startup="mdiPrincipal"
 HelpFile=""
 Command32=""
