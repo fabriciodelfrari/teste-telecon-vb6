@@ -109,7 +109,7 @@ Private Sub grdClientes_DblClick()
     'encontra o form que já está aberto, evitando que abra uma nova janela
    For Each frmFormAberto In Forms
         If frmFormAberto.Name = "frmConsultaClientes" Then
-            frmFormAberto.sBuscarCliente (grdClientes.TextMatrix(grdClientes.Row, 0))
+            frmFormAberto.sInserirDadosDoClienteNoForm (grdClientes.TextMatrix(grdClientes.Row, 0))
             Unload Me
             Exit Sub
         End If
