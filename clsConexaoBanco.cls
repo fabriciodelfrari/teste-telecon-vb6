@@ -15,10 +15,24 @@ Option Explicit
 
 Dim cn As ADODB.Connection
 Dim rs As ADODB.Recordset
+Dim ServidorBanco As String
+Dim BancoDeDados As String
+Dim Usuario As String
+Dim Senha As String
+
 
 Public Sub ConectarBanco()
     Set cn = New ADODB.Connection
-    cn.Open "Provider=SQLOLEDB;Data Source= NBKDEV03;Initial Catalog=TESTEVB6;User ID=trabmaisprati;Password=trabmaisprati;"
+    Dim sStringConexao As String
+
+    LerConfiguracoesParaAcessoAoBanco
+
+    sStringConexao = "Provider=SQLOLEDB;Data Source=" & ServidorBanco
+    sStringConexao = sStringConexao & ";Initial Catalog=" & BancoDeDados
+    sStringConexao = sStringConexao & ";User ID=" & Usuario & ";Password=" & Senha & ";"
+
+    cn.Open sStringConexao
+
 End Sub
 
 
@@ -32,17 +46,23 @@ Public Sub FecharRecordset()
     rs.Close
 End Sub
 
-Public Function oPesquisaBanco(ByVal sQuery As String)
-    Set rs = New ADODB.Recordset
+Public Function fPesquisaBanco(ByVal sQuery As String) As ADODB.Recordset
+
+
+    ConectarBanco
+
+    Set rs = CreateObject("ADODB.Recordset")
+
     rs.Open sQuery, cn
 
-    Set oPesquisaBanco = rs
+    Set fPesquisaBanco = rs
 
     Set rs = Nothing
+
 End Function
 
 Public Sub InserirNoBanco(ByVal sQuery As String)
-    On Error GoTo TratamentoDeErro
+    On Error GoTo tratamentodeerro
     Dim cmd As ADODB.Command
 
     Set cmd = New ADODB.Command
@@ -54,11 +74,44 @@ Public Sub InserirNoBanco(ByVal sQuery As String)
 
     cmd.Execute
 
-TratamentoDeErro:
+tratamentodeerro:
     If Err.Number <> 0 Then
-        MsgBox "Ocorreu um erro ao cadastrar o cliente. Contate o suporte." & " Erro: " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+        MsgBox "Ocorreu um erro ao cadastrar o cliente." & " Erro: " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
 
     'Verificar como gerar logs de erro.
+End Sub
+
+Private Sub LerConfiguracoesParaAcessoAoBanco()
+    Dim sNomeArquivo As String
+    Dim iNumerosDeLinha As Integer
+    Dim sLinha As String
+    Dim arrLinha() As String
+
+    sNomeArquivo = App.Path & "\config.txt"
+
+    'Abrir o arquivo config.txt
+    iNumerosDeLinha = FreeFile
+    Open sNomeArquivo For Input As #iNumerosDeLinha
+
+    'Ler as linhas do arquivo
+    Do Until EOF(iNumerosDeLinha)
+        Line Input #iNumerosDeLinha, sLinha
+        arrLinha() = Split(sLinha, " = ")    'Criar chave e valor, dividindo a linha
+
+        'Atribuir os valores as variaveis
+        Select Case arrLinha(0)
+        Case "Servidor"
+            ServidorBanco = arrLinha(1)
+        Case "Banco"
+            BancoDeDados = arrLinha(1)
+        Case "Usuario"
+            Usuario = arrLinha(1)
+        Case "Senha"
+            Senha = arrLinha(1)
+        End Select
+    Loop
+
+    Close #iNumerosDeLinha
 End Sub
 

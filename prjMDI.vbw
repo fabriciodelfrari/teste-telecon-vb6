@@ -1,8 +1,9 @@
-mdiPrincipal = 130, 130, 808, 539, C, 104, 104, 709, 530, C
-frmCadClientes = 26, 26, 865, 272, Z, 78, 91, 772, 517, C
+mdiPrincipal = 130, 130, 808, 539, , 104, 104, 709, 530, C
 JSON = 0, 0, 772, 246, 
 cStringBuilder = 0, 0, 0, 0, C
-cJSONScript = 52, 52, 1007, 302, 
+cJSONScript = 52, 52, 1007, 302, C
 mdlConexaoBanco = 26, 26, 837, 452, 
 clsConexaobanco = 78, 78, 889, 504, 
 clsTratamentoMascaras = 156, 156, 966, 582, 
+frmConsultaClientes = 52, 52, 862, 478, , 26, 26, 836, 452, C
+clsContextoConsultaClientes = 156, 156, 982, 582, 
