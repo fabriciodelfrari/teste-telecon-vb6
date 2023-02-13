@@ -19,24 +19,6 @@ Begin VB.Form frmConsultaClientes
    MDIChild        =   -1  'True
    ScaleHeight     =   8910
    ScaleWidth      =   15960
-   Begin VB.CommandButton cmdPrimeiroCliente1 
-      Caption         =   "Consultar CEP"
-      BeginProperty Font 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      Height          =   315
-      Index           =   0
-      Left            =   3120
-      TabIndex        =   37
-      Top             =   5880
-      Width           =   1575
-   End
    Begin VB.CommandButton cmdUltimoCliente 
       Caption         =   "Último"
       Height          =   615
@@ -763,6 +745,7 @@ Private Sub sBuscarCliente(ByVal lCodCliente As String)
     txtCodigo.Text = rsRetornoBanco("CodCliente")
     txtNome.Text = rsRetornoBanco("Nome")
     txtCpf.Text = rsRetornoBanco("CPF")
+    'inserir o cpf no campo, já formatado
     txtCpf.Text = Mid(txtCpf.Text, 1, 3) & "." & Mid(txtCpf.Text, 4, 3) & "." & Mid(txtCpf.Text, 7, 3) & "-" & Mid(txtCpf.Text, 10, 2)
     txtEndereco.Text = arrEndereco(0)
     txtNumero.Text = arrEndereco(1)
@@ -1324,3 +1307,4 @@ Private Function fFormataEnderecoCompleto(ByVal sEndereco As String, ByVal sNume
 
     fFormataEnderecoCompleto = sEnderecoCompleto
 End Function
+
