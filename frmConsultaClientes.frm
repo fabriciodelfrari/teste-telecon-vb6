@@ -19,11 +19,20 @@ Begin VB.Form frmConsultaClientes
    MDIChild        =   -1  'True
    ScaleHeight     =   8910
    ScaleWidth      =   15960
+   Begin VB.CommandButton cmdExcluir 
+      Caption         =   "Excluir"
+      Height          =   615
+      Index           =   1
+      Left            =   7560
+      TabIndex        =   37
+      Top             =   4920
+      Width           =   1035
+   End
    Begin VB.CommandButton cmdUltimoCliente 
       Caption         =   ">>"
       Height          =   615
       Index           =   0
-      Left            =   11760
+      Left            =   12360
       TabIndex        =   36
       Top             =   4920
       Width           =   1035
@@ -32,7 +41,7 @@ Begin VB.Form frmConsultaClientes
       Caption         =   ">"
       Height          =   615
       Index           =   1
-      Left            =   10560
+      Left            =   11160
       TabIndex        =   35
       Top             =   4920
       Width           =   1035
@@ -41,7 +50,7 @@ Begin VB.Form frmConsultaClientes
       Caption         =   "Cancelar"
       Height          =   615
       Index           =   0
-      Left            =   9360
+      Left            =   9960
       TabIndex        =   34
       Top             =   4920
       Width           =   1035
@@ -50,7 +59,7 @@ Begin VB.Form frmConsultaClientes
       Caption         =   "Novo"
       Height          =   615
       Index           =   0
-      Left            =   8160
+      Left            =   8760
       TabIndex        =   33
       Top             =   4920
       Width           =   1035
@@ -59,7 +68,7 @@ Begin VB.Form frmConsultaClientes
       Caption         =   "Alterar"
       Height          =   615
       Index           =   0
-      Left            =   6960
+      Left            =   6360
       TabIndex        =   32
       Top             =   4920
       Width           =   1035
@@ -68,7 +77,7 @@ Begin VB.Form frmConsultaClientes
       Caption         =   "Gravar"
       Height          =   615
       Index           =   0
-      Left            =   5760
+      Left            =   5160
       TabIndex        =   31
       Top             =   4920
       Width           =   1035
@@ -77,7 +86,7 @@ Begin VB.Form frmConsultaClientes
       Caption         =   "<"
       Height          =   615
       Index           =   0
-      Left            =   4560
+      Left            =   3960
       TabIndex        =   30
       Top             =   4920
       Width           =   1035
@@ -86,7 +95,7 @@ Begin VB.Form frmConsultaClientes
       Caption         =   "<<"
       Height          =   615
       Index           =   1
-      Left            =   3360
+      Left            =   2760
       TabIndex        =   29
       Top             =   4920
       Width           =   1035
@@ -519,6 +528,14 @@ Dim Conexao As New clsConexaobanco
 Dim clsContexto As New clsContextoConsultaClientes
 Dim clsTratamentoMascara As New clsTratamentoMascaras
 
+Private Sub cmdExcluir_Click(Index As Integer)
+    If MsgBox("Você tem certeza que deseja excluir este cadastro?", vbYesNo, "Atenção!") Then
+        sDeletarCliente txtCodigo.Text
+    Else
+        Exit Sub
+    End If
+End Sub
+
 '  ------------------------------LOAD DO FORMULÁRIO-----------------------------------------
 Private Sub Form_Load()
     sDefineContextoBusca
@@ -674,6 +691,7 @@ Private Sub cmdGravar_Click(Index As Integer)
     If clsContexto.ContextoAtual = Cadastro Then
         sCadastrarCliente
         sDefineContextoBusca
+        sBuscarUltimoClienteCadastrado
     ElseIf clsContexto.ContextoAtual = Alteracao Then
         sAlterarCliente
         sDefineContextoBusca
@@ -862,7 +880,7 @@ Private Sub sCadastrarCliente()
     sQuery = sQuery & txtCidade.Text & "', '" & txtBairro.Text & "','"
     sQuery = sQuery & sCpfSemMascara & "'," & txtLimiteCredito.Text & ", 0, " & btSexo & ")"
 
-    Conexao.InserirNoBanco (sQuery)
+    Conexao.InserirOuDeletarNoBanco (sQuery)
 
     Conexao.DesconectarBanco
 
@@ -922,39 +940,39 @@ On Error GoTo TrataErro
         Exit Sub
     End If
     If Not rsRetornoBanco("Nome") = txtNome.Text Then
-        Conexao.InserirNoBanco "UPDATE Clientes SET Nome = '" & txtNome.Text & "' WHERE CodCliente = " & txtCodigo.Text
+        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Nome = '" & txtNome.Text & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Endereco") = sEnderecoCompleto Then
-        Conexao.InserirNoBanco "UPDATE Clientes SET Endereco = '" & sEnderecoCompleto & "' WHERE CodCliente = " & txtCodigo.Text
+        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Endereco = '" & sEnderecoCompleto & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Cidade") = txtCidade.Text Then
-        Conexao.InserirNoBanco "UPDATE Clientes SET Cidade = '" & txtCidade.Text & "' WHERE CodCliente = " & txtCodigo.Text
+        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Cidade = '" & txtCidade.Text & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Bairro") = txtBairro.Text Then
-        Conexao.InserirNoBanco "UPDATE Clientes SET Bairro = '" & txtBairro.Text & "' WHERE CodCliente = " & txtCodigo.Text
+        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Bairro = '" & txtBairro.Text & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Cpf") = sCpfSemMascara Then
-        Conexao.InserirNoBanco "UPDATE Clientes SET CPF = '" & sCpfSemMascara & "' WHERE CodCliente = " & txtCodigo.Text
+        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET CPF = '" & sCpfSemMascara & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Sexo") = bSexo Then
         If bSexo Then
-            Conexao.InserirNoBanco "UPDATE Clientes SET Sexo = 1 WHERE CodCliente = " & txtCodigo.Text
+            Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Sexo = 1 WHERE CodCliente = " & txtCodigo.Text
         Else
-            Conexao.InserirNoBanco "UPDATE Clientes SET Sexo = 0 WHERE CodCliente = " & txtCodigo.Text
+            Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Sexo = 0 WHERE CodCliente = " & txtCodigo.Text
         End If
     End If
     If Not Replace(Format(rsRetornoBanco("LimiteCredito"), "0.00"), ",", ".") = txtLimiteCredito.Text Then
         If MsgBox("Você tem certeza que deseja aumentar o limite do cliente para R$" & txtLimiteCredito.Text & "?", vbYesNo, "Atenção!") Then
-            Conexao.InserirNoBanco "UPDATE Clientes SET LimiteCredito = " & txtLimiteCredito.Text & " WHERE CodCliente = " & txtCodigo.Text
+            Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET LimiteCredito = " & txtLimiteCredito.Text & " WHERE CodCliente = " & txtCodigo.Text
         End If
     End If
 
     'telefone
     If Not rsRetornoBanco("CodigoArea") = sCodArea Then
-        Conexao.InserirNoBanco "UPDATE ClienteTelefones SET CodigoArea = '" & sCodArea & "' WHERE CodCliente = " & txtCodigo.Text
+        Conexao.InserirOuDeletarNoBanco "UPDATE ClienteTelefones SET CodigoArea = '" & sCodArea & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Telefone") = sNumeroTelefone Then
-        Conexao.InserirNoBanco "UPDATE ClienteTelefones SET Telefone = '" & sNumeroTelefone & "' WHERE CodCliente = " & txtCodigo.Text
+        Conexao.InserirOuDeletarNoBanco "UPDATE ClienteTelefones SET Telefone = '" & sNumeroTelefone & "' WHERE CodCliente = " & txtCodigo.Text
     End If
 
     sInserirDadosDoClienteNoForm txtCodigo.Text
@@ -964,6 +982,26 @@ TrataErro:
         MsgBox "Ocorreu um erro ao alterar o cliente: " & Err.Description & " - " & Err.Number
     End If
     
+End Sub
+Private Sub sDeletarCliente(ByVal sCodCliente As String)
+    On Error GoTo TrataErro
+    Dim sQuery As String
+    
+    'qualquer erro que ocorrer, dará rollback e não atingirá os dados
+    sQuery = " BEGIN TRY BEGIN TRANSACTION "
+    sQuery = sQuery & " DELETE FROM ClienteTelefones WHERE CodCliente = " & sCodCliente
+    sQuery = sQuery & " DELETE FROM Clientes WHERE CodCliente = " & sCodCliente
+    sQuery = sQuery & "COMMIT TRANSACTION END TRY"
+    sQuery = sQuery & " BEGIN CATCH "
+    sQuery = sQuery & " IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION END CATCH"
+    
+    Conexao.InserirOuDeletarNoBanco (sQuery)
+
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao cadastrar o cliente: " & Err.Description & " - " & Err.Number
+    End If
+
 End Sub
 Private Sub sCadastrarTelefone(ByVal sTelefoneCompleto As String, ByVal sCodCliente As String)
     On Error GoTo TrataErro
@@ -986,7 +1024,7 @@ Private Sub sCadastrarTelefone(ByVal sTelefoneCompleto As String, ByVal sCodClie
     sQuery = sQuery & "VALUES(" & iProximoCodClienteTelefone & ", " & sCodCliente & ", " & sCodArea & ", "
     sQuery = sQuery & sTelefone & ", '-')"
 
-    Conexao.InserirNoBanco (sQuery)
+    Conexao.InserirOuDeletarNoBanco (sQuery)
 
 TrataErro:
     If Err.Number <> 0 Then
@@ -1241,6 +1279,7 @@ Private Sub sConfiguraContextoBusca()
     sAtivaBotao ("cmdAlterar")
     sAtivaBotao ("cmdProximoCliente")
     sAtivaBotao ("cmdUltimoCliente")
+    sAtivaBotao ("cmdExcluir")
     sDesativaBotao ("cmdGravar")
     sDesativaBotao ("cmdCancelar")
 
@@ -1269,6 +1308,7 @@ Private Sub sConfiguraContextoAlteracaoECadastro()
     sDesativaBotao ("cmdAlterar")
     sDesativaBotao ("cmdProximoCliente")
     sDesativaBotao ("cmdUltimoCliente")
+    sDesativaBotao ("cmdExcluir")
     sAtivaBotao ("cmdGravar")
     sAtivaBotao ("cmdCancelar")
 

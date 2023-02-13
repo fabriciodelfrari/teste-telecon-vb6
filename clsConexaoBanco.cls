@@ -61,9 +61,10 @@ Public Function fPesquisaBanco(ByVal sQuery As String) As ADODB.Recordset
 
 End Function
 
-Public Sub InserirNoBanco(ByVal sQuery As String)
-    On Error GoTo tratamentodeerro
+Public Sub InserirOuDeletarNoBanco(ByVal sQuery As String)
+    On Error GoTo TrataErro
     Dim cmd As ADODB.Command
+    Dim iRetorno As Integer
 
     Set cmd = New ADODB.Command
     With cmd
@@ -71,10 +72,10 @@ Public Sub InserirNoBanco(ByVal sQuery As String)
         .CommandType = adCmdText
         .CommandText = sQuery
     End With
-
+    
     cmd.Execute
 
-tratamentodeerro:
+TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao cadastrar o cliente." & " Erro: " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
