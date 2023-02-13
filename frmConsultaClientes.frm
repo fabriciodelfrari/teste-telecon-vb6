@@ -650,12 +650,14 @@ Private Sub cmdPrimeiroCliente_Click(Index As Integer)
 End Sub
 
 Private Sub cmdProcura_Click()
+
     FrmBuscaClientes.Show
+    
 End Sub
 
 Private Sub cmdProximoCliente_Click(Index As Integer)
+
     Dim iUltimoCliente As Integer
-    Dim sProximoClienteCodigo As String
 
     If txtCodigo.Text = Empty Then
         MsgBox "Não é possível ir para próximo pois não há informações de clientes no formulário", vbInformation, "Atenção!"
@@ -663,18 +665,12 @@ Private Sub cmdProximoCliente_Click(Index As Integer)
         Exit Sub
     End If
 
-    sProximoClienteCodigo = fBuscarCodigoDoProximoCliente(txtCodigo.Text)
-
-    'quando não há um próximo cliente, o método retorna vazio
-    If sProximoClienteCodigo = Empty Then
-        Exit Sub
-    End If
-
-    sInserirDadosDoClienteNoForm sProximoClienteCodigo
+    sBuscarCodigoDoProximoCliente (txtCodigo.Text)
 
 End Sub
 
 Private Sub cmdGravar_Click(Index As Integer)
+
     If clsContexto.ContextoAtual = Cadastro Then
         sCadastrarCliente
         sDefineContextoBusca
@@ -773,12 +769,13 @@ TrataErro:
         MsgBox "Ocorreu um erro ao buscar o último cliente", vbInformation, "Atenção!"
     End If
 End Sub
-Private Function fBuscarCodigoDoProximoCliente(ByVal lCodClienteAtual As String) As String
+Private Sub sBuscarCodigoDoProximoCliente(ByVal lCodClienteAtual As String)
     On Error GoTo TrataErro
 
     lCodClienteAtual = Trim(lCodClienteAtual)
     Dim rsRetornoBanco As ADODB.Recordset
     Dim sQuery As String
+    Dim sCodigoProximoCliente As String
 
     Set Conexao = New clsConexaobanco
 
@@ -791,16 +788,18 @@ Private Function fBuscarCodigoDoProximoCliente(ByVal lCodClienteAtual As String)
 
     If rsRetornoBanco.EOF Then
         MsgBox "Não há mais clientes para buscar.", vbInformation, "Atenção!"
-        Exit Function
+        Exit Sub
     Else
-        fBuscarCodigoDoProximoCliente = rsRetornoBanco("CodCliente")
+        sCodigoProximoCliente = rsRetornoBanco("CodCliente")
     End If
+    
+    sInserirDadosDoClienteNoForm sCodigoProximoCliente
 
 TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao buscar o cliente: " & Err.Description & " - " & Err.Number
     End If
-End Function
+End Sub
 Private Sub sBuscarClienteAnterior(ByVal lCodClienteAtual As String)
     On Error GoTo TrataErro
 
