@@ -1,0 +1,4 @@
+Servidor = NBKDEV03
+Banco = TESTEVB6
+Usuario = sa
+Senha = a2m8x7h5
