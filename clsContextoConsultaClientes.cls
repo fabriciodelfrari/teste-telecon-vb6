@@ -20,7 +20,6 @@ Public Enum Contexto
     Exclusao
 End Enum
 
-Public frmAtual As Form
 Private eContextoAtual As Contexto
 
 Public Property Get ContextoAtual() As Contexto
@@ -29,8 +28,6 @@ End Property
 
 Public Property Let DefineContexto(ByVal vNovoContexto As Contexto)
     eContextoAtual = vNovoContexto
-
-    frmAtual.Refresh
 End Property
 
 

@@ -48,7 +48,6 @@ End Sub
 
 Public Function fPesquisaBanco(ByVal sQuery As String) As ADODB.Recordset
 
-
     ConectarBanco
 
     Set rs = CreateObject("ADODB.Recordset")
@@ -57,7 +56,8 @@ Public Function fPesquisaBanco(ByVal sQuery As String) As ADODB.Recordset
 
     Set fPesquisaBanco = rs
 
-    Set rs = Nothing
+    'Set rs = Nothing
+    'DesconectarBanco
 
 End Function
 

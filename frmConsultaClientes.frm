@@ -521,7 +521,6 @@ Dim clsTratamentoMascara As New clsTratamentoMascaras
 
 '  ------------------------------LOAD DO FORMULÁRIO-----------------------------------------
 Private Sub Form_Load()
-    Set clsContexto.frmAtual = Me
     sDefineContextoBusca
     sConfiguraContextoBusca
     
@@ -651,11 +650,7 @@ Private Sub cmdPrimeiroCliente_Click(Index As Integer)
 End Sub
 
 Private Sub cmdProcura_Click()
-    lbCep.Visible = False
-    txtCep.Visible = False
-
-    'precisa criar uma funcionalidade para abrir uma lista de clientes
-
+    FrmBuscaClientes.Show
 End Sub
 
 Private Sub cmdProximoCliente_Click(Index As Integer)
@@ -713,7 +708,7 @@ Private Sub cmdUltimoCliente_Click(Index As Integer)
 End Sub
 '------------------------------PROCEDIMENTOS E FUNÇÕES PARA BUSCAS/CADASTRO NO BANCO -----------------------------------------
 
-Private Sub sBuscarCliente(ByVal lCodCliente As String)
+Public Sub sBuscarCliente(ByVal lCodCliente As String)
     On Error GoTo TrataErro
 
     If Not clsContexto.ContextoAtual = Busca Then
