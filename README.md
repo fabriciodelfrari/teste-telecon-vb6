@@ -9,7 +9,7 @@ O sistema possui as seguintes funcionalidades:
 
  - A funcionalidade de gravar um novo cliente permite que você insira informações básicas sobre o cliente: nome, CPF, endereço, telefone e limite de crédito.
 
-## lterar informações de um cliente
+## Alterar informações de um cliente
 
  - A funcionalidade de alterar informações de um cliente permite que você edite as informações já cadastradas sobre o cliente.
 
@@ -42,7 +42,7 @@ O sistema possui as seguintes funcionalidades:
  - Microsoft FlexGrid Control 6.0 (SP6)
  - Microsoft Windows Common Controls 6.0 (SP6)
 
-## Referencias de Projeto
+## Referências de Projeto
 
  - Microsoft ActiveX Data Objects 2.8 Library
  - Microsoft Scripting RunTime
