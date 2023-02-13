@@ -24,15 +24,15 @@ Dim Senha As String
 Public Sub ConectarBanco()
     Set cn = New ADODB.Connection
     Dim sStringConexao As String
-    
+
     LerConfiguracoesParaAcessoAoBanco
-    
+
     sStringConexao = "Provider=SQLOLEDB;Data Source=" & ServidorBanco
     sStringConexao = sStringConexao & ";Initial Catalog=" & BancoDeDados
     sStringConexao = sStringConexao & ";User ID=" & Usuario & ";Password=" & Senha & ";"
-    
+
     cn.Open sStringConexao
-    
+
 End Sub
 
 
@@ -48,17 +48,17 @@ End Sub
 
 Public Function fPesquisaBanco(ByVal sQuery As String) As ADODB.Recordset
 
-    
+
     ConectarBanco
-    
+
     Set rs = CreateObject("ADODB.Recordset")
-    
+
     rs.Open sQuery, cn
 
     Set fPesquisaBanco = rs
 
     Set rs = Nothing
-    
+
 End Function
 
 Public Sub InserirNoBanco(ByVal sQuery As String)
@@ -97,18 +97,18 @@ Private Sub LerConfiguracoesParaAcessoAoBanco()
     'Ler as linhas do arquivo
     Do Until EOF(iNumerosDeLinha)
         Line Input #iNumerosDeLinha, sLinha
-        arrLinha() = Split(sLinha, " = ") 'Criar chave e valor, dividindo a linha
+        arrLinha() = Split(sLinha, " = ")    'Criar chave e valor, dividindo a linha
 
         'Atribuir os valores as variaveis
         Select Case arrLinha(0)
-            Case "Servidor"
-                ServidorBanco = arrLinha(1)
-            Case "Banco"
-                BancoDeDados = arrLinha(1)
-            Case "Usuario"
-                Usuario = arrLinha(1)
-            Case "Senha"
-                Senha = arrLinha(1)
+        Case "Servidor"
+            ServidorBanco = arrLinha(1)
+        Case "Banco"
+            BancoDeDados = arrLinha(1)
+        Case "Usuario"
+            Usuario = arrLinha(1)
+        Case "Senha"
+            Senha = arrLinha(1)
         End Select
     Loop
 

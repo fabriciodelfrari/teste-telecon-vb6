@@ -18,6 +18,7 @@ Module=mdlConexaoBanco; mdlConexaoBanco.bas
 Class=clsConexaobanco; clsConexaoBanco.cls
 Class=clsTratamentoMascaras; clsTratamentoMarcaras.cls
 Form=frmConsultaClientes.frm
+Class=clsContextoConsultaClientes; clsContextoConsultaClientes.cls
 Startup="mdiPrincipal"
 HelpFile=""
 Command32=""
