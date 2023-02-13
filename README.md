@@ -1,4 +1,6 @@
-CRUD Básico para Gerenciamento de Clientes
+![Sistem.png](https://github.com/fdfcosta-telecon/teste-telecon-vb6/blob/develop/img/Sistema.png?raw=true)
+
+<p style="font-size:20px font-weight: bold">CRUD Básico para Gerenciamento de Clientes</p>
 Este é um exemplo de um sistema de CRUD básico para gerenciamento de clientes criado para um teste de conhecimentos em Visual Basic do Grupo Telecon. 
 O sistema possui as seguintes funcionalidades:
 
@@ -16,6 +18,15 @@ A funcionalidade de buscar o próximo cliente permite que você visualize as inf
 
 Buscar cliente anterior
 A funcionalidade de buscar o cliente anterior permite que você visualize as informações sobre o cliente anteriormente cadastrado em relação ao cliente atualmente selecionado.
+
+Buscar primeiro cliente
+A funcionalidade de buscar o cliente anterior permite que você visualize as informações sobre o primeiro cliente cadastrado.
+
+Buscar último cliente
+A funcionalidade de buscar o último cliente permite que você visualize as informações sobre o último cliente cadastrado.
+
+Pesquisar clientes 
+A funcionalidade de pesquisar clientes retorna um grid contendo a lista de clientes cadastrados, e ao clicar duas vezes sobre o cliente desejado, abrirá o formulário de consulta contendo suas informações.
 
 Componentes Utilizados
 Microsoft FlexGrid Control 6.0 (SP6)
