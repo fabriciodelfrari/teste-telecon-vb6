@@ -38,7 +38,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
 
-Dim clsConexao As New clsConexaobanco
 'const's do grid
 Private Const lbtCodigo As Byte = 0
 Private Const lbtNome As Byte = 1
@@ -80,7 +79,7 @@ Private Sub sListarClientes()
         sQuery = "SELECT c.*, ct.CodigoArea, ct.Telefone, ct.Observacao FROM Clientes c "
         sQuery = sQuery & "LEFT JOIN ClienteTelefones ct on c.CodCliente = ct.CodCliente"
         
-        Set rsRetornoBanco = clsConexao.fPesquisaBanco(sQuery)
+        Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco(sQuery)
         .rows = 1
         
         Do While Not rsRetornoBanco.EOF

@@ -524,12 +524,13 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Option Explicit
-Dim Conexao As New clsConexaobanco
 Dim clsContexto As New clsContextoConsultaClientes
+
 Dim clsTratamentoMascara As New clsTratamentoMascaras
 
 '  ------------------------------LOAD DO FORMULÁRIO-----------------------------------------
 Private Sub Form_Load()
+
     sDefineContextoBusca
     sConfiguraContextoBusca
     sBuscarUltimoClienteCadastrado
@@ -688,7 +689,7 @@ End Sub
 
 Private Sub cmdGravar_Click(Index As Integer)
 
-    If bVerificarCamposVaziosOuExcedentes = True Then
+    If fVerificarCamposVaziosOuExcedentes = True Then
         If clsContexto.ContextoAtual = Cadastro Then
             sCadastrarCliente
             sDefineContextoBusca
@@ -740,14 +741,13 @@ Public Sub sInserirDadosDoClienteNoForm(ByVal lCodCliente As String)
     Dim sNumeroEndereco As String
     Dim sTelefoneCompleto As String
     Dim arrEndereco() As String
-    'Set Conexao = New clsConexaobanco
 
     sQuery = "SELECT c.*, ct.CodigoArea, ct.Telefone, ct.Observacao FROM Clientes c "
     sQuery = sQuery & "LEFT JOIN ClienteTelefones ct on c.CodCliente = ct.CodCliente "
     sQuery = sQuery & "WHERE c.CodCliente = " & lCodCliente
 
 
-    Set rsRetornoBanco = Conexao.fPesquisaBanco(sQuery)
+    Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco(sQuery)
 
     sTelefoneCompleto = rsRetornoBanco("CodigoArea") & rsRetornoBanco("Telefone")
     sTelefoneCompleto = Format(sTelefoneCompleto, "(##)#####-####")
@@ -800,14 +800,12 @@ Private Sub sBuscarCodigoDoProximoCliente(ByVal lCodClienteAtual As String)
     Dim sQuery As String
     Dim sCodigoProximoCliente As String
 
-    Set Conexao = New clsConexaobanco
-
     sQuery = "SELECT TOP 1 CodCliente  FROM Clientes "
     sQuery = sQuery & "WHERE CodCliente > " & lCodClienteAtual
     sQuery = sQuery & " ORDER BY CodCliente ASC"
 
 
-    Set rsRetornoBanco = Conexao.fPesquisaBanco(sQuery)
+    Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco(sQuery)
 
     If rsRetornoBanco.EOF Then
         MsgBox "Não há mais clientes para buscar.", vbInformation, "Atenção!"
@@ -835,7 +833,7 @@ Private Sub sBuscarClienteAnterior(ByVal lCodClienteAtual As String)
     sQuery = sQuery & "WHERE CodCliente < " & lCodClienteAtual
     sQuery = sQuery & " ORDER BY CodCliente DESC"
 
-    Set rsRetornoBanco = Conexao.fPesquisaBanco(sQuery)
+    Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco(sQuery)
 
     If rsRetornoBanco.EOF Then
         MsgBox "Não há mais clientes para buscar.", vbInformation, "Atenção!"
@@ -856,7 +854,6 @@ End Sub
 Private Sub sCadastrarCliente()
     On Error GoTo TrataErro
 
-    'Set Conexao = New clsConexaobanco
     Dim sQuery As String
     Dim btSexo As Byte
     Dim sRemoveMascara As clsTratamentoMascaras
@@ -881,7 +878,7 @@ Private Sub sCadastrarCliente()
     sQuery = sQuery & txtCidade.Text & "', '" & txtBairro.Text & "','"
     sQuery = sQuery & sCpfSemMascara & "'," & txtLimiteCredito.Text & ", 0, " & btSexo & ")"
 
-    Conexao.InserirOuDeletarNoBanco (sQuery)
+    mdlConexaoBanco.InserirOuDeletarNoBanco (sQuery)
 
     Conexao.DesconectarBanco
 
@@ -910,7 +907,6 @@ Private Sub sAlterarCliente()
     Dim sCodArea As String
     Dim sNumeroTelefone As String
     Dim rsRetornoBanco As ADODB.Recordset
-    'Set Conexao = New clsConexaobanco
 
     'verifica sexo para facilitar comparação com o banco
     If optMasculino = True Then
@@ -925,7 +921,7 @@ Private Sub sAlterarCliente()
     sQuery = sQuery & "WHERE c.CodCliente = " & txtCodigo.Text
 
     Conexao.ConectarBanco
-    Set rsRetornoBanco = Conexao.fPesquisaBanco(sQuery)
+    Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco(sQuery)
 
     sEnderecoCompleto = fFormataEnderecoCompleto(txtEndereco.Text, txtNumero.Text)
     sCpfSemMascara = clsTratamentoMascara.sRemoveMascaraCpf(txtCpf.Text)
@@ -939,39 +935,39 @@ Private Sub sAlterarCliente()
         Exit Sub
     End If
     If Not rsRetornoBanco("Nome") = txtNome.Text Then
-        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Nome = '" & txtNome.Text & "' WHERE CodCliente = " & txtCodigo.Text
+        mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE Clientes SET Nome = '" & txtNome.Text & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Endereco") = sEnderecoCompleto Then
-        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Endereco = '" & sEnderecoCompleto & "' WHERE CodCliente = " & txtCodigo.Text
+        mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE Clientes SET Endereco = '" & sEnderecoCompleto & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Cidade") = txtCidade.Text Then
-        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Cidade = '" & txtCidade.Text & "' WHERE CodCliente = " & txtCodigo.Text
+        mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE Clientes SET Cidade = '" & txtCidade.Text & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Bairro") = txtBairro.Text Then
-        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Bairro = '" & txtBairro.Text & "' WHERE CodCliente = " & txtCodigo.Text
+        mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE Clientes SET Bairro = '" & txtBairro.Text & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Cpf") = sCpfSemMascara Then
-        Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET CPF = '" & sCpfSemMascara & "' WHERE CodCliente = " & txtCodigo.Text
+        mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE Clientes SET CPF = '" & sCpfSemMascara & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Sexo") = bSexo Then
         If bSexo Then
-            Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Sexo = 1 WHERE CodCliente = " & txtCodigo.Text
+            mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE Clientes SET Sexo = 1 WHERE CodCliente = " & txtCodigo.Text
         Else
-            Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET Sexo = 0 WHERE CodCliente = " & txtCodigo.Text
+            mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE Clientes SET Sexo = 0 WHERE CodCliente = " & txtCodigo.Text
         End If
     End If
     If Not Replace(Format(rsRetornoBanco("LimiteCredito"), "0.00"), ",", ".") = txtLimiteCredito.Text Then
         If MsgBox("Você tem certeza que deseja aumentar o limite do cliente para R$" & txtLimiteCredito.Text & "?", vbYesNo, "Atenção!") Then
-            Conexao.InserirOuDeletarNoBanco "UPDATE Clientes SET LimiteCredito = " & txtLimiteCredito.Text & " WHERE CodCliente = " & txtCodigo.Text
+            mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE Clientes SET LimiteCredito = " & txtLimiteCredito.Text & " WHERE CodCliente = " & txtCodigo.Text
         End If
     End If
 
     'telefone
     If Not rsRetornoBanco("CodigoArea") = sCodArea Then
-        Conexao.InserirOuDeletarNoBanco "UPDATE ClienteTelefones SET CodigoArea = '" & sCodArea & "' WHERE CodCliente = " & txtCodigo.Text
+        mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE ClienteTelefones SET CodigoArea = '" & sCodArea & "' WHERE CodCliente = " & txtCodigo.Text
     End If
     If Not rsRetornoBanco("Telefone") = sNumeroTelefone Then
-        Conexao.InserirOuDeletarNoBanco "UPDATE ClienteTelefones SET Telefone = '" & sNumeroTelefone & "' WHERE CodCliente = " & txtCodigo.Text
+        mdlConexaoBanco.InserirOuDeletarNoBanco "UPDATE ClienteTelefones SET Telefone = '" & sNumeroTelefone & "' WHERE CodCliente = " & txtCodigo.Text
     End If
 
     sInserirDadosDoClienteNoForm txtCodigo.Text
@@ -994,7 +990,7 @@ Private Sub sDeletarCliente(ByVal sCodCliente As String)
     sQuery = sQuery & " BEGIN CATCH "
     sQuery = sQuery & " IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION END CATCH"
 
-    Conexao.InserirOuDeletarNoBanco (sQuery)
+    mdlConexaoBanco.InserirOuDeletarNoBanco (sQuery)
 
 TrataErro:
     If Err.Number <> 0 Then
@@ -1015,7 +1011,6 @@ Private Sub sCadastrarTelefone(ByVal sTelefoneCompleto As String, ByVal sCodClie
     sCodArea = Mid(sTelefoneCompleto, 2, 2)
     sTelefone = Mid(sTelefoneCompleto, 5, 10)
     sTelefone = Replace(sTelefone, "-", "")
-    'Set Conexao = New clsConexaobanco
 
     Conexao.ConectarBanco
 
@@ -1023,7 +1018,7 @@ Private Sub sCadastrarTelefone(ByVal sTelefoneCompleto As String, ByVal sCodClie
     sQuery = sQuery & "VALUES(" & iProximoCodClienteTelefone & ", " & sCodCliente & ", " & sCodArea & ", "
     sQuery = sQuery & sTelefone & ", '-')"
 
-    Conexao.InserirOuDeletarNoBanco (sQuery)
+    mdlConexaoBanco.InserirOuDeletarNoBanco (sQuery)
 
 TrataErro:
     If Err.Number <> 0 Then
@@ -1036,9 +1031,8 @@ Private Function fObterPrimeiroCodigoCliente() As Integer
 
     Dim iPrimeiroCodigo As Integer
     Dim rsRetornoBanco As ADODB.Recordset
-    Set Conexao = New clsConexaobanco
 
-    Set rsRetornoBanco = Conexao.fPesquisaBanco("SELECT MIN(CodCliente) as Primeiro FROM CLIENTES")
+    Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco("SELECT MIN(CodCliente) as Primeiro FROM CLIENTES")
 
     iPrimeiroCodigo = Val(rsRetornoBanco("Primeiro"))
 
@@ -1055,9 +1049,8 @@ Private Function fObterProximoCodigoClienteTelefone() As Integer
 
     Dim iProxCodigoClienteTelefone As Integer
     Dim rsRetornoBanco As ADODB.Recordset
-    Set Conexao = New clsConexaobanco
 
-    Set rsRetornoBanco = Conexao.fPesquisaBanco("SELECT MAX(CodClienteTelefone) as Maior FROM ClienteTelefones")
+    Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco("SELECT MAX(CodClienteTelefone) as Maior FROM ClienteTelefones")
 
     iProxCodigoClienteTelefone = Val(rsRetornoBanco("Maior"))
 
@@ -1072,12 +1065,10 @@ End Function
 Private Function fObterProximoCodigoCliente() As Integer
     On Error GoTo TrataErro
 
-    Dim Conexao As clsConexaobanco
     Dim iProxCodigoCliente As Integer
     Dim rsRetornoBanco As ADODB.Recordset
-    Set Conexao = New clsConexaobanco
 
-    Set rsRetornoBanco = Conexao.fPesquisaBanco("SELECT MAX(CodCliente) as Maior FROM CLIENTES")
+    Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco("SELECT MAX(CodCliente) as Maior FROM CLIENTES")
 
     iProxCodigoCliente = Val(rsRetornoBanco("maior"))
 
@@ -1100,73 +1091,73 @@ Private Function fParsearJson(ByVal sObjJson As String) As Object
 
 End Function
 
-Private Function bVerificarCamposVaziosOuExcedentes() As Boolean
+Private Function fVerificarCamposVaziosOuExcedentes() As Boolean
 
     If Len(txtNome.Text) < 1 Then
         MsgBox "Campo nome está vazio ou incompleto.", vbInformation, "Atenção!"
         txtNome.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtCpf.Text) < 1 Then
         MsgBox "Campo CPF está vazio ou incompleto.", vbInformation, "Atenção!"
         txtCpf.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtCep.Text) < 1 Then
         If Not clsContexto.ContextoAtual = Alteracao Then
             MsgBox "Campo CEP está vázio ou incompleto.", vbInformation, "Atenção!"
             txtEndereco.SetFocus
-            bVerificarCamposVaziosOuExcedentes = False
+            fVerificarCamposVaziosOuExcedentes = False
             Exit Function
         End If
     ElseIf Len(txtEndereco.Text) < 5 Then
         MsgBox "Campo Endereço está vázio ou incompleto.", vbInformation, "Atenção!"
         txtEndereco.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtEndereco.Text) > 60 Then
         MsgBox "Campo Endereço excedeu o limite máximo de caracteres (60). Por favor, abrevie.", vbInformation, "Atenção!"
         txtEndereco.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtNumero.Text) < 1 Then
         MsgBox "Campo Número está vázio ou incompleto.", vbInformation, "Atenção!"
         txtNumero.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtCidade.Text) < 3 Then
         MsgBox "Campo Cidade está vázio ou incompleto.", vbInformation, "Atenção!"
         txtCidade.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtCidade.Text) > 40 Then
         MsgBox "Campo Cidade excedeu o limite máximo de caracteres (40). Por favor, abrevie.", vbInformation, "Atenção!"
         txtCidade.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtBairro.Text) < 3 Then
         MsgBox "Campo Bairro está vázio ou incompleto.", vbInformation, "Atenção!"
         txtBairro.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf optMasculino.Value = False And optFeminino.Value = False Then
         MsgBox "Campo Sexo não foi definido. Por favor, verifique.", vbInformation, "Atenção!"
         optMasculino.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtTelefoneContato.Text) < 14 Then
         MsgBox "Campo Telefone está vázio ou incompleto.", vbInformation, "Atenção!"
         txtTelefoneContato.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     ElseIf Len(txtLimiteCredito.Text) < 1 Then
         MsgBox "Campo Limite de Crédito está vázio ou incompleto.", vbInformation, "Atenção!"
         txtLimiteCredito.SetFocus
-        bVerificarCamposVaziosOuExcedentes = False
+        fVerificarCamposVaziosOuExcedentes = False
         Exit Function
     End If
 
-    bVerificarCamposVaziosOuExcedentes = True
+    fVerificarCamposVaziosOuExcedentes = True
 
 End Function
 
