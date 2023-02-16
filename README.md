@@ -37,6 +37,10 @@ O sistema possui as seguintes funcionalidades:
 
  - A funcionalidade de pesquisar clientes retorna um grid contendo a lista de clientes cadastrados, e ao clicar duas vezes sobre o cliente desejado, abrirá o formulário de consulta contendo suas informações.
 
+## Bibliotecas Utilizadas
+
+ - VBJSON -  utilizada para manipulação de dados JSON 
+
 ## Componentes Utilizados
 
  - Microsoft FlexGrid Control 6.0 (SP6)
