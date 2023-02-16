@@ -12,13 +12,13 @@ Attribute VB_Creatable = True
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
-Public Function sRemoveMascaraCpf(ByVal sCpf As String) As String
+Public Function fRemoveMascaraCpf(ByVal sCpf As String) As String
     On Error GoTo TrataErro
 
     sCpf = Replace(sCpf, ".", "")
     sCpf = Replace(sCpf, "-", "")
 
-    sRemoveMascaraCpf = sCpf
+    fRemoveMascaraCpf = sCpf
 
 TrataErro:
     If Err.Number <> 0 Then

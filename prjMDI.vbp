@@ -15,7 +15,6 @@ Module=JSON; C:\Users\fabricio.costa\Desktop\VBJSON\JSON.bas
 Class=cStringBuilder; C:\Users\fabricio.costa\Desktop\VBJSON\cStringBuilder.cls
 Class=cJSONScript; C:\Users\fabricio.costa\Desktop\VBJSON\cJSONScript.cls
 Module=mdlConexaoBanco; mdlConexaoBanco.bas
-Class=clsConexaobanco; clsConexaoBanco.cls
 Class=clsTratamentoMascaras; clsTratamentoMarcaras.cls
 Form=frmConsultaClientes.frm
 Class=clsContextoConsultaClientes; clsContextoConsultaClientes.cls
