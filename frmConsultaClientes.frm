@@ -528,19 +528,11 @@ Dim Conexao As New clsConexaobanco
 Dim clsContexto As New clsContextoConsultaClientes
 Dim clsTratamentoMascara As New clsTratamentoMascaras
 
-Private Sub cmdExcluir_Click(Index As Integer)
-    If MsgBox("Você tem certeza que deseja excluir este cadastro?", vbYesNo, "Atenção!") Then
-        sDeletarCliente txtCodigo.Text
-    Else
-        Exit Sub
-    End If
-End Sub
-
 '  ------------------------------LOAD DO FORMULÁRIO-----------------------------------------
 Private Sub Form_Load()
     sDefineContextoBusca
     sConfiguraContextoBusca
-    
+    sBuscarUltimoClienteCadastrado
 End Sub
 
 '  ------------------------------COMANDOS (BOTÕES)-----------------------------------------
@@ -596,6 +588,14 @@ Private Sub cmdAlterar_Click(Index As Integer)
 
     sDefineContextoAlteracao
 
+End Sub
+Private Sub cmdExcluir_Click(Index As Integer)
+    If MsgBox("Você tem certeza que deseja excluir este cadastro?", vbYesNo, "Atenção!") Then
+        sDeletarCliente txtCodigo.Text
+        sBuscarUltimoClienteCadastrado
+    Else
+        Exit Sub
+    End If
 End Sub
 
 Private Sub cmdCancelar_Click(Index As Integer)
@@ -669,7 +669,7 @@ End Sub
 Private Sub cmdProcura_Click()
 
     FrmBuscaClientes.Show
-    
+
 End Sub
 
 Private Sub cmdProximoCliente_Click(Index As Integer)
@@ -688,14 +688,19 @@ End Sub
 
 Private Sub cmdGravar_Click(Index As Integer)
 
-    If clsContexto.ContextoAtual = Cadastro Then
-        sCadastrarCliente
-        sDefineContextoBusca
-        sBuscarUltimoClienteCadastrado
-    ElseIf clsContexto.ContextoAtual = Alteracao Then
-        sAlterarCliente
-        sDefineContextoBusca
+    If bVerificarCamposVaziosOuExcedentes = True Then
+        If clsContexto.ContextoAtual = Cadastro Then
+            sCadastrarCliente
+            sDefineContextoBusca
+
+        ElseIf clsContexto.ContextoAtual = Alteracao Then
+            sAlterarCliente
+            sDefineContextoBusca
+        End If
     End If
+
+
+
 
 End Sub
 
@@ -779,7 +784,7 @@ Private Sub sBuscarUltimoClienteCadastrado()
 
     Dim iCodUltimoCliente As Integer
 
-    iCodUltimoCliente = fObterProximoCodigoCliente - 1 'esta funcao retorna o ultimo codigo cadastrado + 1
+    iCodUltimoCliente = fObterProximoCodigoCliente - 1    'esta funcao retorna o ultimo codigo cadastrado + 1
 
     sInserirDadosDoClienteNoForm str(iCodUltimoCliente)
 TrataErro:
@@ -810,7 +815,7 @@ Private Sub sBuscarCodigoDoProximoCliente(ByVal lCodClienteAtual As String)
     Else
         sCodigoProximoCliente = rsRetornoBanco("CodCliente")
     End If
-    
+
     sInserirDadosDoClienteNoForm sCodigoProximoCliente
 
 TrataErro:
@@ -838,22 +843,18 @@ Private Sub sBuscarClienteAnterior(ByVal lCodClienteAtual As String)
     Else
         sCodigoClienteAnterior = rsRetornoBanco("CodCliente")
     End If
-    
+
     sInserirDadosDoClienteNoForm sCodigoClienteAnterior
 
 TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao buscar o cliente: " & Err.Description & " - " & Err.Number
     End If
-    
+
 End Sub
 
 Private Sub sCadastrarCliente()
     On Error GoTo TrataErro
-
-    If Not bVerificarCamposVaziosOuExcedentes Then
-        Exit Sub
-    End If
 
     'Set Conexao = New clsConexaobanco
     Dim sQuery As String
@@ -869,7 +870,7 @@ Private Sub sCadastrarCliente()
     End If
 
     Set sRemoveMascara = New clsTratamentoMascaras
-    sCpfSemMascara = sRemoveMascara.sRemoveMascaraCpf(txtCpf.Text)
+    sCpfSemMascara = clsTratamentoMascara.fRemoveMascaraCpf(txtCpf.Text)
 
     iProximoCodigo = fObterProximoCodigoCliente
 
@@ -890,6 +891,8 @@ Private Sub sCadastrarCliente()
 
     sLimparCampos
 
+    sBuscarUltimoClienteCadastrado
+
 TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao cadastrar o cliente: " & Err.Description & " - " & Err.Number
@@ -897,7 +900,7 @@ TrataErro:
 
 End Sub
 Private Sub sAlterarCliente()
-On Error GoTo TrataErro
+    On Error GoTo TrataErro
 
     If Not bVerificarCamposVaziosOuExcedentes Then
         Exit Sub
@@ -981,12 +984,12 @@ TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao alterar o cliente: " & Err.Description & " - " & Err.Number
     End If
-    
+
 End Sub
 Private Sub sDeletarCliente(ByVal sCodCliente As String)
     On Error GoTo TrataErro
     Dim sQuery As String
-    
+
     'qualquer erro que ocorrer, dará rollback e não atingirá os dados
     sQuery = " BEGIN TRY BEGIN TRANSACTION "
     sQuery = sQuery & " DELETE FROM ClienteTelefones WHERE CodCliente = " & sCodCliente
@@ -994,7 +997,7 @@ Private Sub sDeletarCliente(ByVal sCodCliente As String)
     sQuery = sQuery & "COMMIT TRANSACTION END TRY"
     sQuery = sQuery & " BEGIN CATCH "
     sQuery = sQuery & " IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION END CATCH"
-    
+
     Conexao.InserirOuDeletarNoBanco (sQuery)
 
 TrataErro:
@@ -1005,7 +1008,7 @@ TrataErro:
 End Sub
 Private Sub sCadastrarTelefone(ByVal sTelefoneCompleto As String, ByVal sCodCliente As String)
     On Error GoTo TrataErro
-    
+
     Dim iProximoCodClienteTelefone As Integer
     Dim sCodArea As String
     Dim sTelefone As String
@@ -1049,7 +1052,7 @@ TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao buscar o código do cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Function
 Private Function fObterProximoCodigoClienteTelefone() As Integer
     On Error GoTo TrataErro
@@ -1068,7 +1071,7 @@ TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao buscar o código do cliente (telefone)." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Function
 Private Function fObterProximoCodigoCliente() As Integer
     On Error GoTo TrataErro
@@ -1088,7 +1091,7 @@ TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao buscar o código do cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Function
 
 '------------------------------PROCEDIMENTOS E FUNÇÕES AUXILIARES -----------------------------------------
@@ -1098,7 +1101,7 @@ Private Function fParsearJson(ByVal sObjJson As String) As Object
     Dim obJson As Object
     Set obJson = JSON.parse(sObjJson)
     Set fParsearJson = obJson
-    
+
 End Function
 
 Private Function bVerificarCamposVaziosOuExcedentes() As Boolean
@@ -1186,7 +1189,7 @@ Private Sub sLimparCampos()
     txtValorGasto.Text = ""
     optMasculino = False
     optFeminino = False
-    
+
 End Sub
 
 Private Sub sTrancarCampos()
@@ -1247,13 +1250,13 @@ Private Sub sDefineContextoAlteracao()
 
     clsContexto.DefineContexto = Alteracao
     sConfiguraContextoAlteracaoECadastro
-    
+
 End Sub
 Private Sub sDefineContextoCadastro()
 
     clsContexto.DefineContexto = Cadastro
     sConfiguraContextoAlteracaoECadastro
-    
+
 End Sub
 
 'Definir os campos de texto e botoes que podem ser acessados pelo usuario no contexto
@@ -1324,7 +1327,7 @@ Private Sub sAtivaBotao(ByVal sNomeBotao As String)
             End If
         End If
     Next ctl
-    
+
 End Sub
 Private Sub sDesativaBotao(ByVal sNomeBotao As String)
 
@@ -1337,14 +1340,14 @@ Private Sub sDesativaBotao(ByVal sNomeBotao As String)
             End If
         End If
     Next ctl
-    
+
 End Sub
 Private Function fFormataEnderecoCompleto(ByVal sEndereco As String, ByVal sNumero As String)
 
     Dim sEnderecoCompleto As String
-    
+
     sEnderecoCompleto = sEndereco & ", " & sNumero
     fFormataEnderecoCompleto = sEnderecoCompleto
-    
+
 End Function
 
