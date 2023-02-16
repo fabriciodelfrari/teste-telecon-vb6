@@ -530,17 +530,201 @@ Dim clsTratamentoMascara As New clsTratamentoMascaras
 
 '  ------------------------------LOAD DO FORMULÁRIO-----------------------------------------
 Private Sub Form_Load()
+On Error GoTo TrataErro
 
     sDefineContextoBusca
     sConfiguraContextoBusca
     sBuscarUltimoClienteCadastrado
+
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorrreu um erro ao carregar o formulário. " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
 End Sub
 
 '  ------------------------------COMANDOS (BOTÕES)-----------------------------------------
 'Os contextos são definidos a partir dos comandos
+Private Sub cmdPrimeiroCliente_Click(Index As Integer)
+    On Error GoTo TrataErro
+    Dim iCodPrimeiroCliente As String
+    iCodPrimeiroCliente = str(fObterPrimeiroCodigoCliente)
+    iCodPrimeiroCliente = Trim(iCodPrimeiroCliente)
+    sInserirDadosDoClienteNoForm str(iCodPrimeiroCliente)
 
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao buscar o primeiro cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
+Private Sub cmdClienteAnterior_Click(Index As Integer)
+    On Error GoTo TrataErro
+
+    Dim iCodigoClienteAnterior As String
+
+    If txtCodigo.Text = Empty Then
+        MsgBox "Não é possível ir para o anterior pois não há informações de clientes no formulário", vbInformation, "Atenção!"
+        txtCodigo.SetFocus
+        Exit Sub
+    End If
+
+    sBuscarClienteAnterior (txtCodigo.Text)
+
+    If iCodigoClienteAnterior = Empty Then
+        Exit Sub
+    End If
+
+    sInserirDadosDoClienteNoForm iCodigoClienteAnterior
+
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao buscar cliente anterior." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
+Private Sub cmdGravar_Click(Index As Integer)
+    On Error GoTo TrataErro
+
+    If fVerificarCamposVaziosOuExcedentes = True Then
+        If clsContexto.ContextoAtual = Cadastro Then
+            sCadastrarCliente
+            sDefineContextoBusca
+
+        ElseIf clsContexto.ContextoAtual = Alteracao Then
+            sAlterarCliente
+            sDefineContextoBusca
+        End If
+    End If
+
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao gravar cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
+Private Sub cmdAlterar_Click(Index As Integer)
+    On Error GoTo TrataErro
+
+    If txtCodigo.Text = Empty Then
+        MsgBox "Não há cliente para alterar.", vbInformation, "Atenção!"
+        Exit Sub
+    End If
+
+    sDefineContextoAlteracao
+
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao iniciar alteração." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
+Private Sub cmdExcluir_Click(Index As Integer)
+    On Error GoTo TrataErro
+
+    If MsgBox("Você tem certeza que deseja excluir este cadastro?", vbYesNo, "Atenção!") Then
+        sDeletarCliente txtCodigo.Text
+        sBuscarUltimoClienteCadastrado
+    Else
+        Exit Sub
+    End If
+
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao excluir o cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
+Private Sub cmdNovoCliente_Click(Index As Integer)
+    On Error GoTo TrataErro
+
+    sDefineContextoCadastro
+    sLimparCampos
+
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao iniciar novo cadastro." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+End Sub
+Private Sub cmdCancelar_Click(Index As Integer)
+    On Error GoTo TrataErro
+
+    Dim sCodClienteAtual As String
+
+    sCodClienteAtual = txtCodigo.Text
+
+    If sCodClienteAtual = Empty Then
+        sLimparCampos
+        sDefineContextoBusca
+        sBuscarUltimoClienteCadastrado
+        Exit Sub
+    Else
+        If clsContexto.ContextoAtual = Alteracao Then
+            If MsgBox("Tem certeza que deseja cancelar a alteração do cliente?", vbYesNo, "Atenção!") Then
+                sLimparCampos
+                sDefineContextoBusca
+                'retorna aos dados já registrados
+                sInserirDadosDoClienteNoForm sCodClienteAtual
+            End If
+        ElseIf clsContexto.ContextoAtual = Cadastro Then
+            If MsgBox("Tem certeza que deseja cancelar o cadastro do cliente?", vbYesNo, "Atenção!") Then
+                sLimparCampos
+                sDefineContextoBusca
+                'vai para o ultimo cliente cadastrado
+                sInserirDadosDoClienteNoForm str(fObterProximoCodigoCliente - 1)
+            End If
+        End If
+    End If
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorrreu um erro ao cancelar. " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
+
+Private Sub cmdProximoCliente_Click(Index As Integer)
+    On Error GoTo TrataErro
+
+    Dim iUltimoCliente As Integer
+
+    If txtCodigo.Text = Empty Then
+        MsgBox "Não é possível ir para próximo pois não há informações de clientes no formulário", vbInformation, "Atenção!"
+        txtCodigo.SetFocus
+        Exit Sub
+    End If
+
+    sBuscarCodigoDoProximoCliente (txtCodigo.Text)
+
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao buscar próximo cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
+Private Sub cmdUltimoCliente_Click(Index As Integer)
+    On Error GoTo TrataErro
+
+    If Not clsContexto.ContextoAtual = Busca Then
+        sDefineContextoBusca
+    End If
+
+    sBuscarUltimoClienteCadastrado
+
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorrreu um erro ao buscar o último cliente cadastrado. " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
+Private Sub cmdProcura_Click()
+    On Error GoTo TrataErro
+
+    FrmBuscaClientes.Show
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorrreu um erro abrir a tabela de clientes cadastrados. " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+
+End Sub
 Private Sub cmdBuscaEndereco_Click()
     On Error GoTo TrataErro
+
     If Len(txtCep.Text) < 1 Then
         MsgBox "Campo CEP está vázio ou incompleto. Por favor, verifique.", vbInformation, "Atenção!"
         Exit Sub
@@ -580,149 +764,6 @@ TrataErro:
     End If
 End Sub
 
-Private Sub cmdAlterar_Click(Index As Integer)
-
-    If txtCodigo.Text = Empty Then
-        MsgBox "Não há cliente para alterar.", vbInformation, "Atenção!"
-        Exit Sub
-    End If
-
-    sDefineContextoAlteracao
-
-End Sub
-Private Sub cmdExcluir_Click(Index As Integer)
-    If MsgBox("Você tem certeza que deseja excluir este cadastro?", vbYesNo, "Atenção!") Then
-        sDeletarCliente txtCodigo.Text
-        sBuscarUltimoClienteCadastrado
-    Else
-        Exit Sub
-    End If
-End Sub
-
-Private Sub cmdCancelar_Click(Index As Integer)
-    On Error GoTo TrataErro
-
-    Dim sCodClienteAtual As String
-
-    sCodClienteAtual = txtCodigo.Text
-
-    If sCodClienteAtual = Empty Then
-        sLimparCampos
-        sDefineContextoBusca
-        sBuscarUltimoClienteCadastrado
-        Exit Sub
-    Else
-        If clsContexto.ContextoAtual = Alteracao Then
-            If MsgBox("Tem certeza que deseja cancelar a alteração do cliente?", vbYesNo, "Atenção!") Then
-                sLimparCampos
-                sDefineContextoBusca
-                'retorna aos dados já registrados
-                sInserirDadosDoClienteNoForm sCodClienteAtual
-            End If
-        ElseIf clsContexto.ContextoAtual = Cadastro Then
-            If MsgBox("Tem certeza que deseja cancelar o cadastro do cliente?", vbYesNo, "Atenção!") Then
-                sLimparCampos
-                sDefineContextoBusca
-                'vai para o ultimo cliente cadastrado
-                sInserirDadosDoClienteNoForm str(fObterProximoCodigoCliente - 1)
-            End If
-        End If
-    End If
-TrataErro:
-    If Err.Number <> 0 Then
-        MsgBox "Ocorrreu um erro. " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
-    End If
-End Sub
-
-Private Sub cmdClienteAnterior_Click(Index As Integer)
-    On Error GoTo TrataErro
-
-    Dim iCodigoClienteAnterior As String
-
-    If txtCodigo.Text = Empty Then
-        MsgBox "Não é possível ir para o anterior pois não há informações de clientes no formulário", vbInformation, "Atenção!"
-        txtCodigo.SetFocus
-        Exit Sub
-    End If
-
-    sBuscarClienteAnterior (txtCodigo.Text)
-
-    If iCodigoClienteAnterior = Empty Then
-        Exit Sub
-    End If
-
-    sInserirDadosDoClienteNoForm iCodigoClienteAnterior
-
-TrataErro:
-    If Err.Number <> 0 Then
-        MsgBox "Erro ao buscar cliente anterior.", vbInformation, "Atenção!"
-    End If
-
-End Sub
-
-Private Sub cmdPrimeiroCliente_Click(Index As Integer)
-    Dim iCodPrimeiroCliente As String
-    iCodPrimeiroCliente = str(fObterPrimeiroCodigoCliente)
-    iCodPrimeiroCliente = Trim(iCodPrimeiroCliente)
-    sInserirDadosDoClienteNoForm str(iCodPrimeiroCliente)
-End Sub
-
-Private Sub cmdProcura_Click()
-
-    FrmBuscaClientes.Show
-
-End Sub
-
-Private Sub cmdProximoCliente_Click(Index As Integer)
-
-    Dim iUltimoCliente As Integer
-
-    If txtCodigo.Text = Empty Then
-        MsgBox "Não é possível ir para próximo pois não há informações de clientes no formulário", vbInformation, "Atenção!"
-        txtCodigo.SetFocus
-        Exit Sub
-    End If
-
-    sBuscarCodigoDoProximoCliente (txtCodigo.Text)
-
-End Sub
-
-Private Sub cmdGravar_Click(Index As Integer)
-
-    If fVerificarCamposVaziosOuExcedentes = True Then
-        If clsContexto.ContextoAtual = Cadastro Then
-            sCadastrarCliente
-            sDefineContextoBusca
-
-        ElseIf clsContexto.ContextoAtual = Alteracao Then
-            sAlterarCliente
-            sDefineContextoBusca
-        End If
-    End If
-
-
-
-
-End Sub
-
-Private Sub cmdNovoCliente_Click(Index As Integer)
-    On Error GoTo TrataErro
-
-    sDefineContextoCadastro
-    sLimparCampos
-
-TrataErro:
-    If Err.Number <> 0 Then
-        MsgBox "Erro ao iniciar novo cadastro.", vbInformation, "Atenção!"
-    End If
-End Sub
-Private Sub cmdUltimoCliente_Click(Index As Integer)
-    If Not clsContexto.ContextoAtual = Busca Then
-        sDefineContextoBusca
-    End If
-
-    sBuscarUltimoClienteCadastrado
-End Sub
 '------------------------------PROCEDIMENTOS E FUNÇÕES PARA BUSCAS/CADASTRO NO BANCO -----------------------------------------
 
 Public Sub sInserirDadosDoClienteNoForm(ByVal lCodCliente As String)
@@ -776,7 +817,7 @@ Public Sub sInserirDadosDoClienteNoForm(ByVal lCodCliente As String)
 
 TrataErro:
     If Err.Number <> 0 Then
-        MsgBox "Ocorreu um erro ao buscar o cliente: " & Err.Description & " - " & Err.Number
+        MsgBox "Ocorreu um erro ao buscar o cliente. " & Err.Description & " - " & Err.Number
     End If
 End Sub
 Private Sub sBuscarUltimoClienteCadastrado()
@@ -789,7 +830,7 @@ Private Sub sBuscarUltimoClienteCadastrado()
     sInserirDadosDoClienteNoForm str(iCodUltimoCliente)
 TrataErro:
     If Err.Number <> 0 Then
-        MsgBox "Ocorreu um erro ao buscar o último cliente", vbInformation, "Atenção!"
+        MsgBox "Ocorreu um erro ao buscar o último cliente" & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
 End Sub
 Private Sub sBuscarCodigoDoProximoCliente(ByVal lCodClienteAtual As String)
@@ -818,7 +859,7 @@ Private Sub sBuscarCodigoDoProximoCliente(ByVal lCodClienteAtual As String)
 
 TrataErro:
     If Err.Number <> 0 Then
-        MsgBox "Ocorreu um erro ao buscar o cliente: " & Err.Description & " - " & Err.Number
+        MsgBox "Ocorreu um erro ao buscar o cliente. " & Err.Description & " - " & Err.Number
     End If
 End Sub
 Private Sub sBuscarClienteAnterior(ByVal lCodClienteAtual As String)
@@ -1084,14 +1125,20 @@ End Function
 '------------------------------PROCEDIMENTOS E FUNÇÕES AUXILIARES -----------------------------------------
 
 Private Function fParsearJson(ByVal sObjJson As String) As Object
-
+    On Error GoTo TrataErro
+    
     Dim obJson As Object
     Set obJson = JSON.parse(sObjJson)
     Set fParsearJson = obJson
-
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao efetuar o parse do JSON." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+    
 End Function
 
 Private Function fVerificarCamposVaziosOuExcedentes() As Boolean
+    On Error GoTo TrataErro
 
     If Len(txtNome.Text) < 1 Then
         MsgBox "Campo nome está vazio ou incompleto.", vbInformation, "Atenção!"
@@ -1159,10 +1206,16 @@ Private Function fVerificarCamposVaziosOuExcedentes() As Boolean
 
     fVerificarCamposVaziosOuExcedentes = True
 
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro verificar os campos vazios." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+    
 End Function
 
 Private Sub sLimparCampos()
-
+    On Error GoTo TrataErro
+    
     txtCodigo.Text = ""
     txtNome.Text = ""
     txtCpf.Text = ""
@@ -1177,10 +1230,16 @@ Private Sub sLimparCampos()
     optMasculino = False
     optFeminino = False
 
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao limpar os campos do formulário." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+    
 End Sub
 
 Private Sub sTrancarCampos()
-
+On Error GoTo TrataErro
+    
 'como os elementos são trancados todos juntos, caso um já esteja entende-se que todos estarão
     If txtCodigo.Locked = True Then
         Exit Sub
@@ -1200,16 +1259,17 @@ Private Sub sTrancarCampos()
     optMasculino.Enabled = False
     optFeminino.Enabled = False
     cmdBuscaEndereco.Visible = False
-
+    
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao trancar os campos do formulário." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+    
 End Sub
 
 Private Sub sDestrancarCampos()
-
-'como os elementos são trancados todos juntos, caso um não esteja entende-se que todos não estarão
-    If txtCodigo.Locked = False Then
-        Exit Sub
-    End If
-
+    On Error GoTo TrataErro
+    
     txtCodigo.Locked = False
     txtNome.Locked = False
     txtCpf.Locked = False
@@ -1225,29 +1285,52 @@ Private Sub sDestrancarCampos()
     optFeminino.Enabled = True
     cmdBuscaEndereco.Visible = True
 
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao destrancar os campos do formulário." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+    
 End Sub
 'Definir os Contextos
 Private Sub sDefineContextoBusca()
+    On Error GoTo TrataErro
 
     clsContexto.DefineContexto = Busca
     sConfiguraContextoBusca
 
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao definir o contexto Busca." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+    
 End Sub
 Private Sub sDefineContextoAlteracao()
-
+    On Error GoTo TrataErro
+    
     clsContexto.DefineContexto = Alteracao
     sConfiguraContextoAlteracaoECadastro
 
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao definir o contexto Alteracao." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
 End Sub
 Private Sub sDefineContextoCadastro()
-
+    On Error GoTo TrataErro
+    
     clsContexto.DefineContexto = Cadastro
     sConfiguraContextoAlteracaoECadastro
-
+    
+TrataErro:
+    If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao definir o contexto Cadastro." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+    
 End Sub
 
 'Definir os campos de texto e botoes que podem ser acessados pelo usuario no contexto
 Private Sub sConfiguraContextoBusca()
+
     txtCodigo.Locked = True
     txtNome.Locked = True
     txtCpf.Locked = True
@@ -1272,7 +1355,7 @@ Private Sub sConfiguraContextoBusca()
     sAtivaBotao ("cmdExcluir")
     sDesativaBotao ("cmdGravar")
     sDesativaBotao ("cmdCancelar")
-
+    
 End Sub
 Private Sub sConfiguraContextoAlteracaoECadastro()
 
@@ -1304,7 +1387,8 @@ Private Sub sConfiguraContextoAlteracaoECadastro()
 
 End Sub
 Private Sub sAtivaBotao(ByVal sNomeBotao As String)
-
+    On Error GoTo TrataErro
+    
     Dim ctl As Control
 
     For Each ctl In Me.Controls
@@ -1315,9 +1399,14 @@ Private Sub sAtivaBotao(ByVal sNomeBotao As String)
         End If
     Next ctl
 
+TrataErro:
+      If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao ativar o botão " & sNomeBotao & "." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
+    
 End Sub
 Private Sub sDesativaBotao(ByVal sNomeBotao As String)
-
+    On Error GoTo TrataErro
     Dim ctl As Control
 
     For Each ctl In Me.Controls
@@ -1327,6 +1416,11 @@ Private Sub sDesativaBotao(ByVal sNomeBotao As String)
             End If
         End If
     Next ctl
+    
+TrataErro:
+      If Err.Number <> 0 Then
+        MsgBox "Ocorreu um erro ao desativar o botão " & sNomeBotao & "." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
+    End If
 
 End Sub
 Private Function fFormataEnderecoCompleto(ByVal sEndereco As String, ByVal sNumero As String)

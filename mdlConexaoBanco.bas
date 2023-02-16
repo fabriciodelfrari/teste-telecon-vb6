@@ -60,7 +60,7 @@ Public Sub InserirOuDeletarNoBanco(ByVal sQuery As String)
         .CommandType = adCmdText
         .CommandText = sQuery
     End With
-    
+
     cmd.Execute
 
 TrataErro:

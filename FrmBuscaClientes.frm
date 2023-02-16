@@ -54,7 +54,7 @@ Private Sub sFormatatarFlexGrid()
         .FixedCols = 0
         .rows = 1
         .SelectionMode = flexSelectionByRow
-        
+
         .TextMatrix(0, lbtCodigo) = "Codigo"
         .ColWidth(lbtCodigo) = .Width * 0.1
         .TextMatrix(0, lbtNome) = "Nome"
@@ -66,36 +66,36 @@ Private Sub sFormatatarFlexGrid()
         .TextMatrix(0, lbtContato) = "Contato"
         .ColWidth(lbtContato) = .Width * 0.2
     End With
-    
-        
+
+
 End Sub
 
 Private Sub sListarClientes()
     Dim sQuery As String
     Dim rsRetornoBanco As ADODB.Recordset
     On Error GoTo TrataErro
-    
+
     With grdClientes
         sQuery = "SELECT c.*, ct.CodigoArea, ct.Telefone, ct.Observacao FROM Clientes c "
         sQuery = sQuery & "LEFT JOIN ClienteTelefones ct on c.CodCliente = ct.CodCliente"
-        
+
         Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco(sQuery)
         .rows = 1
-        
+
         Do While Not rsRetornoBanco.EOF
             .rows = .rows + 1
-            
-        .TextMatrix(.rows - 1, lbtCodigo) = rsRetornoBanco("CodCliente")
-        .TextMatrix(.rows - 1, lbtNome) = rsRetornoBanco("Nome")
-        .TextMatrix(.rows - 1, lbtCidade) = rsRetornoBanco("Cidade")
-        .TextMatrix(.rows - 1, lbtBairro) = rsRetornoBanco("Bairro")
-        .TextMatrix(.rows - 1, lbtContato) = rsRetornoBanco("CodigoArea") & " - " & rsRetornoBanco("Telefone")
-        
-        rsRetornoBanco.MoveNext
+
+            .TextMatrix(.rows - 1, lbtCodigo) = rsRetornoBanco("CodCliente")
+            .TextMatrix(.rows - 1, lbtNome) = rsRetornoBanco("Nome")
+            .TextMatrix(.rows - 1, lbtCidade) = rsRetornoBanco("Cidade")
+            .TextMatrix(.rows - 1, lbtBairro) = rsRetornoBanco("Bairro")
+            .TextMatrix(.rows - 1, lbtContato) = rsRetornoBanco("CodigoArea") & " - " & rsRetornoBanco("Telefone")
+
+            rsRetornoBanco.MoveNext
         Loop
     End With
-    
-    
+
+
 TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao listar os clientes. " & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
@@ -104,14 +104,14 @@ End Sub
 
 Private Sub grdClientes_DblClick()
     Dim frmFormAberto As Form
-    
+
     'encontra o form que já está aberto, evitando que abra uma nova janela
-   For Each frmFormAberto In Forms
+    For Each frmFormAberto In Forms
         If frmFormAberto.Name = "frmConsultaClientes" Then
             frmFormAberto.sInserirDadosDoClienteNoForm (grdClientes.TextMatrix(grdClientes.Row, 0))
             Unload Me
             Exit Sub
         End If
     Next
-    
+
 End Sub
