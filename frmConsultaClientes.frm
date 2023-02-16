@@ -902,10 +902,6 @@ End Sub
 Private Sub sAlterarCliente()
     On Error GoTo TrataErro
 
-    If Not bVerificarCamposVaziosOuExcedentes Then
-        Exit Sub
-    End If
-
     Dim sQuery As String
     Dim sEnderecoCompleto As String
     Dim sCpfSemMascara As String
