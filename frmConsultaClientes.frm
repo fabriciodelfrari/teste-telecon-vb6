@@ -153,7 +153,7 @@ Begin VB.Form frmConsultaClientes
          Height          =   315
          Left            =   180
          TabIndex        =   22
-         Top             =   780
+         Top             =   840
          Width           =   1695
          _ExtentX        =   2990
          _ExtentY        =   556
@@ -530,7 +530,7 @@ Dim clsTratamentoMascara As New clsTratamentoMascaras
 
 '  ------------------------------LOAD DO FORMULÁRIO-----------------------------------------
 Private Sub Form_Load()
-On Error GoTo TrataErro
+    On Error GoTo TrataErro
 
     sDefineContextoBusca
     sConfiguraContextoBusca
@@ -1126,7 +1126,7 @@ End Function
 
 Private Function fParsearJson(ByVal sObjJson As String) As Object
     On Error GoTo TrataErro
-    
+
     Dim obJson As Object
     Set obJson = JSON.parse(sObjJson)
     Set fParsearJson = obJson
@@ -1134,7 +1134,7 @@ TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao efetuar o parse do JSON." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Function
 
 Private Function fVerificarCamposVaziosOuExcedentes() As Boolean
@@ -1210,37 +1210,31 @@ TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro verificar os campos vazios." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Function
 
 Private Sub sLimparCampos()
     On Error GoTo TrataErro
-    
-    txtCodigo.Text = ""
-    txtNome.Text = ""
-    txtCpf.Text = ""
-    txtCep.Text = ""
-    txtEndereco.Text = ""
-    txtCidade.Text = ""
-    txtBairro.Text = ""
-    txtNumero.Text = ""
-    txtTelefoneContato.Text = ""
-    txtLimiteCredito.Text = ""
-    txtValorGasto.Text = ""
-    optMasculino = False
-    optFeminino = False
 
+    Dim ctl As Control
+
+    For Each ctl In Controls
+           If TypeOf ctl Is TextBox Or TypeOf ctl Is ActiveText Then
+            ctl.Text = ""
+        End If
+    Next ctl
+    
 TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao limpar os campos do formulário." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Sub
 
 Private Sub sTrancarCampos()
-On Error GoTo TrataErro
-    
-'como os elementos são trancados todos juntos, caso um já esteja entende-se que todos estarão
+    On Error GoTo TrataErro
+
+    'como os elementos são trancados todos juntos, caso um já esteja entende-se que todos estarão
     If txtCodigo.Locked = True Then
         Exit Sub
     End If
@@ -1259,17 +1253,17 @@ On Error GoTo TrataErro
     optMasculino.Enabled = False
     optFeminino.Enabled = False
     cmdBuscaEndereco.Visible = False
-    
+
 TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao trancar os campos do formulário." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Sub
 
 Private Sub sDestrancarCampos()
     On Error GoTo TrataErro
-    
+
     txtCodigo.Locked = False
     txtNome.Locked = False
     txtCpf.Locked = False
@@ -1289,7 +1283,7 @@ TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao destrancar os campos do formulário." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Sub
 'Definir os Contextos
 Private Sub sDefineContextoBusca()
@@ -1302,11 +1296,11 @@ TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao definir o contexto Busca." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Sub
 Private Sub sDefineContextoAlteracao()
     On Error GoTo TrataErro
-    
+
     clsContexto.DefineContexto = Alteracao
     sConfiguraContextoAlteracaoECadastro
 
@@ -1317,15 +1311,15 @@ TrataErro:
 End Sub
 Private Sub sDefineContextoCadastro()
     On Error GoTo TrataErro
-    
+
     clsContexto.DefineContexto = Cadastro
     sConfiguraContextoAlteracaoECadastro
-    
+
 TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao definir o contexto Cadastro." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Sub
 
 'Definir os campos de texto e botoes que podem ser acessados pelo usuario no contexto
@@ -1355,7 +1349,7 @@ Private Sub sConfiguraContextoBusca()
     sAtivaBotao ("cmdExcluir")
     sDesativaBotao ("cmdGravar")
     sDesativaBotao ("cmdCancelar")
-    
+
 End Sub
 Private Sub sConfiguraContextoAlteracaoECadastro()
 
@@ -1388,7 +1382,7 @@ Private Sub sConfiguraContextoAlteracaoECadastro()
 End Sub
 Private Sub sAtivaBotao(ByVal sNomeBotao As String)
     On Error GoTo TrataErro
-    
+
     Dim ctl As Control
 
     For Each ctl In Me.Controls
@@ -1400,10 +1394,10 @@ Private Sub sAtivaBotao(ByVal sNomeBotao As String)
     Next ctl
 
 TrataErro:
-      If Err.Number <> 0 Then
+    If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao ativar o botão " & sNomeBotao & "." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
-    
+
 End Sub
 Private Sub sDesativaBotao(ByVal sNomeBotao As String)
     On Error GoTo TrataErro
@@ -1416,9 +1410,9 @@ Private Sub sDesativaBotao(ByVal sNomeBotao As String)
             End If
         End If
     Next ctl
-    
+
 TrataErro:
-      If Err.Number <> 0 Then
+    If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao desativar o botão " & sNomeBotao & "." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
 
