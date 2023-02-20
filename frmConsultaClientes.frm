@@ -545,12 +545,13 @@ End Sub
 
 '  ------------------------------COMANDOS (BOTÕES)-----------------------------------------
 'Os contextos são definidos a partir dos comandos
+
 Private Sub cmdPrimeiroCliente_Click(Index As Integer)
     On Error GoTo TrataErro
     Dim iCodPrimeiroCliente As String
-    iCodPrimeiroCliente = str(fObterPrimeiroCodigoCliente)
+    iCodPrimeiroCliente = str(sBuscarPrimeiroCliente)
     iCodPrimeiroCliente = Trim(iCodPrimeiroCliente)
-    sInserirDadosDoClienteNoForm str(iCodPrimeiroCliente)
+    sInserirDadosDoClienteNoForm iCodPrimeiroCliente
 
 TrataErro:
     If Err.Number <> 0 Then
@@ -611,7 +612,8 @@ Private Sub cmdAlterar_Click(Index As Integer)
     End If
 
     sDefineContextoAlteracao
-
+    
+TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Erro ao iniciar alteração." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
@@ -690,8 +692,9 @@ Private Sub cmdProximoCliente_Click(Index As Integer)
         Exit Sub
     End If
 
-    sBuscarCodigoDoProximoCliente (txtCodigo.Text)
+    sBuscarProximoCliente (txtCodigo.Text)
 
+TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Erro ao buscar próximo cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
@@ -833,7 +836,7 @@ TrataErro:
         MsgBox "Ocorreu um erro ao buscar o último cliente" & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
 End Sub
-Private Sub sBuscarCodigoDoProximoCliente(ByVal lCodClienteAtual As String)
+Private Sub sBuscarProximoCliente(ByVal lCodClienteAtual As String)
     On Error GoTo TrataErro
 
     lCodClienteAtual = Trim(lCodClienteAtual)
@@ -1067,24 +1070,24 @@ TrataErro:
     End If
 
 End Sub
-Private Function fObterPrimeiroCodigoCliente() As Integer
+Private Sub sBuscarPrimeiroCliente()
     On Error GoTo TrataErro
 
-    Dim iPrimeiroCodigo As Integer
+    Dim iPrimeiroCodigo As String
     Dim rsRetornoBanco As ADODB.Recordset
 
     Set rsRetornoBanco = mdlConexaoBanco.fPesquisaBanco("SELECT MIN(CodCliente) as Primeiro FROM CLIENTES")
 
-    iPrimeiroCodigo = Val(rsRetornoBanco("Primeiro"))
+    iPrimeiroCodigo = rsRetornoBanco("Primeiro")
 
-    fObterPrimeiroCodigoCliente = iPrimeiroCodigo
+    sInserirDadosDoClienteNoForm iPrimeiroCodigo
 
 TrataErro:
     If Err.Number <> 0 Then
         MsgBox "Ocorreu um erro ao buscar o código do cliente." & Err.Number & " - " & Err.Description, vbInformation, "Atenção!"
     End If
 
-End Function
+End Sub
 Private Function fObterProximoCodigoClienteTelefone() As Integer
     On Error GoTo TrataErro
 
